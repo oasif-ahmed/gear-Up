@@ -49,7 +49,62 @@ const restockGearItem = catchAsync(async (req: Request, res: Response, next: Nex
     })
 })
 
+const getAllGear = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { categoryId, brand, minPrice, maxPrice } = req.query;
+
+    const gearItems = await gearItemService.getAllGear({
+        categoryId: categoryId as string | undefined,
+        brand: brand as string | undefined,
+        minPrice: minPrice !== undefined ? Number(minPrice) : undefined,
+        maxPrice: maxPrice !== undefined ? Number(maxPrice) : undefined,
+    });
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpstatus.OK,
+        message: "Gear Items Retrieved Successfully!",
+        data: {
+            gearItems
+        }
+    })
+})
+
+const getGearById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id as string;
+
+    if (!id) {
+        throw new Error("Gear item id is required!");
+    }
+
+    const gearItem = await gearItemService.getGearById(id);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpstatus.OK,
+        message: "Gear Item Retrieved Successfully!",
+        data: {
+            gearItem
+        }
+    })
+})
+
+const getAllCategories = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const categories = await gearItemService.getAllCategories();
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpstatus.OK,
+        message: "Categories Retrieved Successfully!",
+        data: {
+            categories
+        }
+    })
+})
+
 export const gearItemController = {
     createGearItem,
-    restockGearItem
+    restockGearItem,
+    getAllGear,
+    getGearById,
+    getAllCategories
 }
