@@ -1,0 +1,12 @@
+import { Router } from "express";
+import { gearItemController } from "./gearItem.controller";
+import { auth } from "../../middleware/auth";
+import { Role } from "../../../generated/prisma/enums";
+
+const router = Router();
+
+router.post("/gear", auth(Role.PROVIDER), gearItemController.createGearItem);
+
+router.patch("/gear/:id/stock", auth(Role.PROVIDER), gearItemController.restockGearItem);
+
+export const gearItemRoute = router;

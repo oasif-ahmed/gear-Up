@@ -22,6 +22,7 @@ model GearItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([providerId, name, brand, categoryId, condition], map: "gear_provider_name_brand_category_condition_key")
   @@index([categoryId])
   @@index([providerId])
   @@index([status])
