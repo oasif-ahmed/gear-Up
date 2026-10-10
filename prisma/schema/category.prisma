@@ -1,0 +1,13 @@
+model Category {
+  id          String  @id @default(uuid())
+  name        String  @unique @db.VarChar(100)
+  description String? @db.Text
+  image       String? @db.VarChar(500)
+
+  gearItems GearItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("categories")
+}

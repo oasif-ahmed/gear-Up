@@ -1,14 +1,15 @@
 model User {
   id           String       @id @default(uuid())
   name         String       @db.VarChar(255)
-  email        String       @unique
-  password     String
+  email        String       @unique @db.VarChar(255)
+  password     String       @db.VarChar(255)
   activeStatus ActiveStatus @default(ACTIVE)
   role         Role         @default(CUSTOMER)
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   profile      Profile?
-  
+  gearItems    GearItem[]
+
   @@map("users")
 }
 
