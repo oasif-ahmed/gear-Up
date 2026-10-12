@@ -10,6 +10,8 @@ model User {
   profile      Profile?
   gearItems    GearItem[]
 
+  rentalOrders RentalOrder[] @relation("CustomerRentalOrders")
+
   @@map("users")
 }
 
