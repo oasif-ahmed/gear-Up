@@ -7,6 +7,10 @@ const router = Router();
 
 router.post("/gear", auth(Role.PROVIDER), gearItemController.createGearItem);
 
+router.put("/gear/:id", auth(Role.PROVIDER), gearItemController.updateGearItem);
+
+router.delete("/gear/:id", auth(Role.PROVIDER), gearItemController.deleteGearItem);
+
 router.patch("/gear/:id/stock", auth(Role.PROVIDER), gearItemController.restockGearItem);
 
 export const gearItemRoute = router;

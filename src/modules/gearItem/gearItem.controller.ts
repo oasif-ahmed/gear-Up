@@ -49,6 +49,55 @@ const restockGearItem = catchAsync(async (req: Request, res: Response, next: Nex
     })
 })
 
+const updateGearItem = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const itemId = req.params.id as string;
+    const payload = req.body;
+    const providerId = req.user?.id;
+
+    if (!providerId) {
+        throw new Error("Unauthorized! Provider id missing.");
+    }
+
+    if (!itemId) {
+        throw new Error("Gear item id is required!");
+    }
+
+    const gearItem = await gearItemService.updateGearItem(itemId, payload, providerId);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpstatus.OK,
+        message: "Gear Item Updated Successfully!",
+        data: {
+            gearItem
+        }
+    })
+})
+
+const deleteGearItem = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const itemId = req.params.id as string;
+    const providerId = req.user?.id;
+
+    if (!providerId) {
+        throw new Error("Unauthorized! Provider id missing.");
+    }
+
+    if (!itemId) {
+        throw new Error("Gear item id is required!");
+    }
+
+    const gearItem = await gearItemService.deleteGearItem(itemId, providerId);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpstatus.OK,
+        message: "Gear Item Deleted Successfully!",
+        data: {
+            gearItem
+        }
+    })
+})
+
 const getAllGear = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { categoryId, brand, minPrice, maxPrice } = req.query;
 
@@ -104,6 +153,8 @@ const getAllCategories = catchAsync(async (req: Request, res: Response, next: Ne
 export const gearItemController = {
     createGearItem,
     restockGearItem,
+    updateGearItem,
+    deleteGearItem,
     getAllGear,
     getGearById,
     getAllCategories

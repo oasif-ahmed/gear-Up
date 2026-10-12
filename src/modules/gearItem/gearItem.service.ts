@@ -1,6 +1,10 @@
 import { Prisma } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
-import { ICreateGearItem, IRestockGearItem } from "./gearItem.interface";
+import {
+    ICreateGearItem,
+    IRestockGearItem,
+    IUpdateGearItem,
+} from "./gearItem.interface";
 
 const createGearItem = async (
     payload: ICreateGearItem,
@@ -127,6 +131,121 @@ const restockGearItem = async (
     return updatedItem;
 };
 
+const updateGearItem = async (
+    itemId: string,
+    payload: IUpdateGearItem,
+    providerId: string
+) => {
+    const {
+        name,
+        description,
+        brand,
+        images,
+        specifications,
+        condition,
+        pricePerDay,
+        securityDeposit,
+        quantity,
+        status,
+        categoryId,
+    } = payload;
+
+    if (pricePerDay !== undefined && Number(pricePerDay) <= 0) {
+        throw new Error("pricePerDay must be greater than 0!");
+    }
+
+    if (quantity !== undefined && (!Number.isInteger(quantity) || quantity < 0)) {
+        throw new Error("quantity must be a non-negative integer!");
+    }
+
+    // 1. Ensure the item exists and belongs to this provider
+    const existingItem = await prisma.gearItem.findFirst({
+        where: { id: itemId, providerId },
+    });
+
+    if (!existingItem) {
+        throw new Error("Gear item not found for this provider!");
+    }
+
+    // 2. Validate the new category if the category is being changed
+    if (categoryId !== undefined) {
+        const category = await prisma.category.findUnique({
+            where: { id: categoryId },
+        });
+
+        if (!category) {
+            throw new Error("Category not found!");
+        }
+    }
+
+    // 3. Update only the fields that were provided
+    const data: Prisma.GearItemUpdateInput = {};
+
+    if (name !== undefined) data.name = name;
+    if (description !== undefined) data.description = description;
+    if (brand !== undefined) data.brand = brand;
+    if (images !== undefined) data.images = images;
+    if (specifications !== undefined) data.specifications = specifications;
+    if (condition !== undefined) data.condition = condition;
+    if (pricePerDay !== undefined) {
+        data.pricePerDay = new Prisma.Decimal(pricePerDay.toString());
+    }
+    if (securityDeposit !== undefined) {
+        data.securityDeposit =
+            securityDeposit === null
+                ? null
+                : new Prisma.Decimal(securityDeposit.toString());
+    }
+    if (quantity !== undefined) data.quantity = quantity;
+    if (status !== undefined) data.status = status;
+    if (categoryId !== undefined) data.category = { connect: { id: categoryId } };
+
+    try {
+        const updatedItem = await prisma.gearItem.update({
+            where: { id: existingItem.id },
+            data,
+        });
+
+        return updatedItem;
+    } catch (error) {
+        if (
+            error instanceof Prisma.PrismaClientKnownRequestError &&
+            error.code === "P2002"
+        ) {
+            throw new Error("This gear already exists for your shop!");
+        }
+        throw error;
+    }
+};
+
+const deleteGearItem = async (itemId: string, providerId: string) => {
+    const existingItem = await prisma.gearItem.findFirst({
+        where: { id: itemId, providerId },
+    });
+
+    if (!existingItem) {
+        throw new Error("Gear item not found for this provider!");
+    }
+
+    // Rental orders reference gear with onDelete: Restrict.
+    // Block deletion so we never lose rental history.
+    const rentalOrderCount = await prisma.rentalOrder.count({
+        where: { gearItemId: existingItem.id },
+    });
+
+    if (rentalOrderCount > 0) {
+        throw new Error(
+            "This gear item has rental orders and cannot be removed. Mark it as NOT_AVAILABLE instead."
+        );
+    }
+
+    const deletedItem = await prisma.gearItem.delete({
+        where: { id: existingItem.id },
+    });
+
+    return deletedItem;
+};
+
 const getAllGear = async (filters: {
     categoryId?: string;
     brand?: string;
@@ -196,6 +315,8 @@ const getAllCategories = async () => {
 export const gearItemService = {
     createGearItem,
     restockGearItem,
+    updateGearItem,
+    deleteGearItem,
     getAllGear,
     getGearById,
     getAllCategories,
