@@ -1,0 +1,208 @@
+
+
+import { ActiveStatus, Role } from "../../../generated/prisma/enums";
+import { prisma } from "../../lib/prisma";
+import { ICreateRentalOrder } from "./rentalOrder.interface";
+
+const createRentalOrder = async (
+  payload: ICreateRentalOrder,
+  customerId: string,
+) => {
+  const { startDate, endDate, items } = payload;
+
+  // Step 1: Validate customer
+  const customer = await prisma.user.findUnique({
+    where: { id: customerId },
+  });
+
+  if (!customer) {
+    throw new Error("Customer not found!");
+  }
+
+  if (customer.role !== Role.CUSTOMER) {
+    throw new Error("Unauthorized. You are not a customer!");
+  }
+
+  if (customer.activeStatus !== ActiveStatus.ACTIVE) {
+    throw new Error(
+      "You have been suspended. You cannot place an order!",
+    );
+  }
+
+  // Step 2: Validate items
+  if (!items?.length) {
+    throw new Error("Please select at least one gear item!");
+  }
+
+  const gearItemIds = items.map((item) => item.gearItemId);
+
+  if (new Set(gearItemIds).size !== gearItemIds.length) {
+    throw new Error("Duplicate gear items are not allowed!");
+  }
+
+  // Step 3: Validate rental dates
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if (
+    Number.isNaN(start.getTime()) ||
+    Number.isNaN(end.getTime()) ||
+    end <= start
+  ) {
+    throw new Error("Invalid rental dates!");
+  }
+
+  const rentalDays = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
+
+  // Step 4: Validate quantities
+  const quantities = items.map((item) => {
+    const quantity = Number(item.quantity);
+
+    if (!Number.isInteger(quantity) || quantity <= 0) {
+      throw new Error("Invalid quantity!");
+    }
+
+    return quantity;
+  });
+
+  // Step 5: Create order and update stock transactionally
+  const result = await prisma.$transaction(async (tx) => {
+    const gearItems = await tx.gearItem.findMany({
+      where: {
+        id: { in: gearItemIds },
+      },
+    });
+
+    if (gearItems.length !== gearItemIds.length) {
+      throw new Error("One or more gear items were not found!");
+    }
+
+    const gearItemMap = new Map(
+      gearItems.map((gear) => [gear.id, gear]),
+    );
+
+    let totalAmount = 0;
+
+    const orderItems = items.map((item, index) => {
+      const gearItem = gearItemMap.get(item.gearItemId);
+
+      if (!gearItem) {
+        throw new Error("Gear item not found!");
+      }
+
+      const quantity = quantities[index]!;
+
+      if (gearItem.quantity < quantity) {
+        throw new Error(
+          `Not enough stock for gear item ${gearItem.id}!`,
+        );
+      }
+
+      const pricePerDay = Number(gearItem.pricePerDay);
+
+      totalAmount += pricePerDay * rentalDays * quantity;
+
+      return {
+        gearItemId: gearItem.id,
+        quantity,
+        pricePerDay: gearItem.pricePerDay,
+      };
+    });
+
+    // Step 5.1: Create rental order
+    const rentalOrder = await tx.rentalOrder.create({
+      data: {
+        customerId,
+        startDate: start,
+        endDate: end,
+        totalAmount,
+      },
+    });
+
+    // Step 5.2: Reduce stock immediately
+    for (const item of orderItems) {
+      const stockUpdated = await tx.gearItem.updateMany({
+        where: {
+          id: item.gearItemId,
+          quantity: { gte: item.quantity },
+        },
+        data: {
+          quantity: { decrement: item.quantity },
+        },
+      });
+
+      if (stockUpdated.count !== 1) {
+        throw new Error(
+          `Not enough stock for gear item ${item.gearItemId}!`,
+        );
+      }
+    }
+
+    // Step 5.3: Create rental order items
+    await tx.rentalOrderItem.createMany({
+      data: orderItems.map((item) => ({
+        rentalOrderId: rentalOrder.id,
+        gearItemId: item.gearItemId,
+        quantity: item.quantity,
+        pricePerDay: item.pricePerDay,
+      })),
+    });
+
+    // Step 5.4: Return order with items
+    return tx.rentalOrder.findUniqueOrThrow({
+      where: { id: rentalOrder.id },
+      include: {
+        items: true,
+      },
+    });
+  });
+
+  return result;
+};
+
+const getMyRentalOrders = async (customerId: string) => {
+  const rentalOrders = await prisma.rentalOrder.findMany({
+    where: {
+      customerId,
+    },
+    include: {
+      items: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return rentalOrders;
+};
+
+const getRentalOrderById = async (id: string, customerId: string) => {
+  const rentalOrder = await prisma.rentalOrder.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      items: {
+        include: {
+          gearItem: true,
+        },
+      },
+    },
+  });
+
+  if (!rentalOrder) {
+    throw new Error("Rental order not found!");
+  }
+
+  if (rentalOrder.customerId !== customerId) {
+    throw new Error("Unauthorized! This is not your rental order.");
+  }
+
+  return rentalOrder;
+};
+
+export const rentalOrderService = {
+  createRentalOrder,
+  getMyRentalOrders,
+  getRentalOrderById,
+};

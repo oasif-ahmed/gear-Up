@@ -229,7 +229,7 @@ const deleteGearItem = async (itemId: string, providerId: string) => {
 
     // Rental orders reference gear with onDelete: Restrict.
     // Block deletion so we never lose rental history.
-    const rentalOrderCount = await prisma.rentalOrder.count({
+    const rentalOrderCount = await prisma.rentalOrderItem.count({
         where: { gearItemId: existingItem.id },
     });
 

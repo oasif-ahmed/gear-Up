@@ -22,7 +22,7 @@ model GearItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  rentalOrders RentalOrder[]
+  rentalOrderItems RentalOrderItem[]
 
   @@unique([providerId, name, brand, categoryId, condition], map: "gear_provider_name_brand_category_condition_key")
   @@index([categoryId])
