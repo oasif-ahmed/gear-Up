@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma";
+import { AppError } from "../../utils/AppError";
 import { IcreateCategories } from "./categories.interface"
 
 const createCategories = async (payload: IcreateCategories) => {
@@ -10,7 +11,7 @@ const createCategories = async (payload: IcreateCategories) => {
         }
     })
     if(categoryExist){
-        throw new Error("This Categories Alreay Exists!");
+        throw new AppError("This Categories Alreay Exists!", 409);
     }
 
     const createCategory = await prisma.category.create({

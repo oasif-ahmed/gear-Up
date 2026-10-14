@@ -1,18 +1,19 @@
 import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
-import { gearItemService } from "./gearItem.service";
+import { providerService } from "./provider.service";
 import { sendResponse } from "../../utils/sendResponse";
 import httpstatus from "http-status-codes";
+import { AppError } from "../../utils/AppError";
 
 const createGearItem = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const payload = req.body;
     const providerId = req.user?.id;
 
     if (!providerId) {
-        throw new Error("Unauthorized! Provider id missing.");
+        throw new AppError("Unauthorized! Provider id missing.", 401);
     }
 
-    const gearItem = await gearItemService.createGearItem(payload, providerId);
+    const gearItem = await providerService.createGearItem(payload, providerId);
 
     sendResponse(res, {
         success: true,
@@ -30,14 +31,14 @@ const restockGearItem = catchAsync(async (req: Request, res: Response, next: Nex
     const providerId = req.user?.id;
 
     if (!providerId) {
-        throw new Error("Unauthorized! Provider id missing.");
+        throw new AppError("Unauthorized! Provider id missing.", 401);
     }
 
     if (!itemId) {
-        throw new Error("Gear item id is required!");
+        throw new AppError("Gear item id is required!", 400);
     }
 
-    const gearItem = await gearItemService.restockGearItem(itemId, payload, providerId);
+    const gearItem = await providerService.restockGearItem(itemId, payload, providerId);
 
     sendResponse(res, {
         success: true,
@@ -55,14 +56,14 @@ const updateGearItem = catchAsync(async (req: Request, res: Response, next: Next
     const providerId = req.user?.id;
 
     if (!providerId) {
-        throw new Error("Unauthorized! Provider id missing.");
+        throw new AppError("Unauthorized! Provider id missing.", 401);
     }
 
     if (!itemId) {
-        throw new Error("Gear item id is required!");
+        throw new AppError("Gear item id is required!", 400);
     }
 
-    const gearItem = await gearItemService.updateGearItem(itemId, payload, providerId);
+    const gearItem = await providerService.updateGearItem(itemId, payload, providerId);
 
     sendResponse(res, {
         success: true,
@@ -79,14 +80,14 @@ const deleteGearItem = catchAsync(async (req: Request, res: Response, next: Next
     const providerId = req.user?.id;
 
     if (!providerId) {
-        throw new Error("Unauthorized! Provider id missing.");
+        throw new AppError("Unauthorized! Provider id missing.", 401);
     }
 
     if (!itemId) {
-        throw new Error("Gear item id is required!");
+        throw new AppError("Gear item id is required!", 400);
     }
 
-    const gearItem = await gearItemService.deleteGearItem(itemId, providerId);
+    const gearItem = await providerService.deleteGearItem(itemId, providerId);
 
     sendResponse(res, {
         success: true,
@@ -98,62 +99,9 @@ const deleteGearItem = catchAsync(async (req: Request, res: Response, next: Next
     })
 })
 
-const getAllGear = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const { categoryId, brand, minPrice, maxPrice } = req.query;
-
-    const gearItems = await gearItemService.getAllGear({
-        categoryId: categoryId as string | undefined,
-        brand: brand as string | undefined,
-        minPrice: minPrice !== undefined ? Number(minPrice) : undefined,
-        maxPrice: maxPrice !== undefined ? Number(maxPrice) : undefined,
-    });
-
-    sendResponse(res, {
-        success: true,
-        statusCode: httpstatus.OK,
-        message: "Gear Items Retrieved Successfully!",
-        data: {
-            gearItems
-        }
-    })
-})
-
-const getGearById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const id = req.params.id as string;
-
-    if (!id) {
-        throw new Error("Gear item id is required!");
-    }
-
-    const gearItem = await gearItemService.getGearById(id);
-
-    sendResponse(res, {
-        success: true,
-        statusCode: httpstatus.OK,
-        message: "Gear Item Retrieved Successfully!",
-        data: {
-            gearItem
-        }
-    })
-})
-
-const getAllCategories = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const categories = await gearItemService.getAllCategories();
-
-    sendResponse(res, {
-        success: true,
-        statusCode: httpstatus.OK,
-        message: "Categories Retrieved Successfully!",
-        data: {
-            categories
-        }
-    })
-})
-
-
 const getRentalOrders = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const providerId = req.user?.id;
-    const rentalOrders = await gearItemService.getRentalOrders(providerId as string);
+    const rentalOrders = await providerService.getRentalOrders(providerId as string);
 
     sendResponse(res, {
         success: true,
@@ -171,18 +119,18 @@ const updateRentalOrderStatus = catchAsync(async (req: Request, res: Response, n
     const rentalOrderId = req.params.id as string;
 
     if (!providerId) {
-        throw new Error("Unauthorized! Provider id missing.");
+        throw new AppError("Unauthorized! Provider id missing.", 401);
     }
 
     if (!rentalOrderId) {
-        throw new Error("Rental order id is required!");
+        throw new AppError("Rental order id is required!", 400);
     }
 
     if (!newStatus) {
-        throw new Error("Rental order status is required!");
+        throw new AppError("Rental order status is required!", 400);
     }
 
-    const updateStatus = await gearItemService.updateRentalOrderStatus(providerId, rentalOrderId, newStatus);
+    const updateStatus = await providerService.updateRentalOrderStatus(providerId, rentalOrderId, newStatus);
 
     sendResponse(res, {
         success: true,
@@ -194,14 +142,11 @@ const updateRentalOrderStatus = catchAsync(async (req: Request, res: Response, n
     })
 })
 
-export const gearItemController = {
+export const providerController = {
     createGearItem,
     restockGearItem,
     updateGearItem,
     deleteGearItem,
-    getAllGear,
-    getGearById,
-    getAllCategories,
     getRentalOrders,
     updateRentalOrderStatus
 }

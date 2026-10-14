@@ -3,9 +3,11 @@ import cookieParser from "cookie-parser";
 import { userRoutes } from "./modules/user/user.route";
 import { authRoute } from "./modules/auth/auth.route";
 import { categoryRoute } from "./modules/categories/categories.route";
-import { gearItemRoute } from "./modules/gearItem/gearItem.route";
-import { gearPublicRoute } from "./modules/gearItem/gearItem.public.route";
+import { gearPublicRoute } from "./modules/public/gearItem.public.route";
 import { rentalOrderRoute } from "./modules/rentalOrder/rentalOrder.route";
+import { adminRoute } from "./modules/admin/admin.route";
+import { providerRoute } from "./modules/provider/provider.route";
+import { globalErrorHandler } from "./middleware/globalErrorHandler";
 
 const app: Application = express();
 
@@ -23,8 +25,12 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/auth", userRoutes);
 app.use("/api/auth", authRoute);
 app.use("/api/admin", categoryRoute);
-app.use("/api/provider", gearItemRoute);
+app.use("/api/admin", adminRoute);
+app.use("/api/provider", providerRoute);
 app.use("/api", gearPublicRoute);
 app.use("/api", rentalOrderRoute)
+
+// global error handler (must be last)
+app.use(globalErrorHandler);
 
 export default app;

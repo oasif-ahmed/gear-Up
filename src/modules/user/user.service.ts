@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { prisma } from "../../lib/prisma";
 import config from "../../config";
 import { CreateUserPayload, UpdateUserPayload } from "./user.interface";
+import { AppError } from "../../utils/AppError";
 
 const createUserIntoDB = async (payload: CreateUserPayload) => {
   const { name, email, password, role, profilePhoto, phone, bio } = payload;
@@ -12,7 +13,7 @@ const createUserIntoDB = async (payload: CreateUserPayload) => {
   );
 
   if (!role) {
-    throw new Error("Role field must be filled before register!");
+    throw new AppError("Role field must be filled before register!", 400);
   }
 
   const user = await prisma.user.findUnique({
@@ -22,7 +23,7 @@ const createUserIntoDB = async (payload: CreateUserPayload) => {
   });
 
   if (user) {
-    throw new Error("user already Exists.");
+    throw new AppError("user already Exists.", 409);
   }
 
   const createdUser = await prisma.user.create({

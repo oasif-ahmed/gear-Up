@@ -5,6 +5,7 @@ import { jwtUtils } from "../utils/jwt";
 import config from "../config";
 import { JwtPayload } from "jsonwebtoken";
 import { prisma } from "../lib/prisma";
+import { AppError } from "../utils/AppError";
 
 
 declare global {
@@ -26,7 +27,7 @@ export const auth = (...requiredRoles: Role[]) => {
      req.headers.authorization?.split(" ")[1] : req.headers.authorization;
 
      if(!token){
-      throw new Error("you are not logged in. Please log in to access this resource!.");
+      throw new AppError("you are not logged in. Please log in to access this resource!.", 401);
      };
 
 
@@ -37,13 +38,13 @@ export const auth = (...requiredRoles: Role[]) => {
 
 
     if(!verifiedToken.success){
-      throw new Error(verifiedToken.error);
+      throw new AppError(verifiedToken.error, 401);
     }
 
     const { id, name, email, role } = verifiedToken.data as JwtPayload;
 
     if (requiredRoles.length && !requiredRoles.includes(role)) {
-      throw new Error("You do not have the access to get the resource.")
+      throw new AppError("You do not have the access to get the resource.", 403)
     }
 
     const user = await prisma.user.findUnique({
@@ -56,10 +57,10 @@ export const auth = (...requiredRoles: Role[]) => {
     });
 
     if(!user){
-      throw new Error("User not found. Please login.");
+      throw new AppError("User not found. Please login.", 401);
     }
     if(user.activeStatus === ActiveStatus.SUSPEND){
-      throw new Error("Your account has been blocked. Please contact support.")
+      throw new AppError("Your account has been blocked. Please contact support.", 403)
     }
 
     req.user = {

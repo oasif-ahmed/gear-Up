@@ -3,6 +3,7 @@
 import { ActiveStatus, Role } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import { ICreateRentalOrder } from "./rentalOrder.interface";
+import { AppError } from "../../utils/AppError";
 
 const createRentalOrder = async (
   payload: ICreateRentalOrder,
@@ -16,28 +17,29 @@ const createRentalOrder = async (
   });
 
   if (!customer) {
-    throw new Error("Customer not found!");
+    throw new AppError("Customer not found!", 404);
   }
 
   if (customer.role !== Role.CUSTOMER) {
-    throw new Error("Unauthorized. You are not a customer!");
+    throw new AppError("Unauthorized. You are not a customer!", 403);
   }
 
   if (customer.activeStatus !== ActiveStatus.ACTIVE) {
-    throw new Error(
+    throw new AppError(
       "You have been suspended. You cannot place an order!",
+      403,
     );
   }
 
   // Step 2: Validate items
   if (!items?.length) {
-    throw new Error("Please select at least one gear item!");
+    throw new AppError("Please select at least one gear item!", 400);
   }
 
   const gearItemIds = items.map((item) => item.gearItemId);
 
   if (new Set(gearItemIds).size !== gearItemIds.length) {
-    throw new Error("Duplicate gear items are not allowed!");
+    throw new AppError("Duplicate gear items are not allowed!", 400);
   }
 
   // Step 3: Validate rental dates
@@ -49,7 +51,7 @@ const createRentalOrder = async (
     Number.isNaN(end.getTime()) ||
     end <= start
   ) {
-    throw new Error("Invalid rental dates!");
+    throw new AppError("Invalid rental dates!", 400);
   }
 
   const rentalDays = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
@@ -59,7 +61,7 @@ const createRentalOrder = async (
     const quantity = Number(item.quantity);
 
     if (!Number.isInteger(quantity) || quantity <= 0) {
-      throw new Error("Invalid quantity!");
+      throw new AppError("Invalid quantity!", 400);
     }
 
     return quantity;
@@ -74,7 +76,7 @@ const createRentalOrder = async (
     });
 
     if (gearItems.length !== gearItemIds.length) {
-      throw new Error("One or more gear items were not found!");
+      throw new AppError("One or more gear items were not found!", 404);
     }
 
     const gearItemMap = new Map(
@@ -87,14 +89,15 @@ const createRentalOrder = async (
       const gearItem = gearItemMap.get(item.gearItemId);
 
       if (!gearItem) {
-        throw new Error("Gear item not found!");
+        throw new AppError("Gear item not found!", 404);
       }
 
       const quantity = quantities[index]!;
 
       if (gearItem.quantity < quantity) {
-        throw new Error(
+        throw new AppError(
           `Not enough stock for gear item ${gearItem.id}!`,
+          409,
         );
       }
 
@@ -132,8 +135,9 @@ const createRentalOrder = async (
       });
 
       if (stockUpdated.count !== 1) {
-        throw new Error(
+        throw new AppError(
           `Not enough stock for gear item ${item.gearItemId}!`,
+          409,
         );
       }
     }
@@ -191,11 +195,11 @@ const getRentalOrderById = async (id: string, customerId: string) => {
   });
 
   if (!rentalOrder) {
-    throw new Error("Rental order not found!");
+    throw new AppError("Rental order not found!", 404);
   }
 
   if (rentalOrder.customerId !== customerId) {
-    throw new Error("Unauthorized! This is not your rental order.");
+    throw new AppError("Unauthorized! This is not your rental order.", 403);
   }
 
   return rentalOrder;

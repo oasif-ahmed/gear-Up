@@ -4,7 +4,8 @@ import {
   ICreateGearItem,
   IRestockGearItem,
   IUpdateGearItem,
-} from "./gearItem.interface";
+} from "./provider.interface";
+import { AppError } from "../../utils/AppError";
 
 const createGearItem = async (payload: ICreateGearItem, providerId: string) => {
   const {
@@ -22,14 +23,14 @@ const createGearItem = async (payload: ICreateGearItem, providerId: string) => {
   } = payload;
 
   if (pricePerDay !== undefined && Number(pricePerDay) <= 0) {
-    throw new Error("pricePerDay must be greater than 0!");
+    throw new AppError("pricePerDay must be greater than 0!", 400);
   }
 
   if (
     quantity !== undefined &&
     (!Number.isInteger(quantity) || quantity <= 0)
   ) {
-    throw new Error("quantity must be a positive integer!");
+    throw new AppError("quantity must be a positive integer!", 400);
   }
 
   // 1. Check whether the provider exists
@@ -39,15 +40,15 @@ const createGearItem = async (payload: ICreateGearItem, providerId: string) => {
   });
 
   if (!provider) {
-    throw new Error("Provider not found!");
+    throw new AppError("Provider not found!", 404);
   }
 
   if (provider.role !== "PROVIDER") {
-    throw new Error("Only providers can create gear listings!");
+    throw new AppError("Only providers can create gear listings!", 403);
   }
 
   if (provider.activeStatus !== "ACTIVE") {
-    throw new Error("Your account is not active!");
+    throw new AppError("Your account is not active!", 403);
   }
 
   // 2. Check whether the category exists
@@ -56,7 +57,7 @@ const createGearItem = async (payload: ICreateGearItem, providerId: string) => {
   });
 
   if (!category) {
-    throw new Error("Category not found!");
+    throw new AppError("Category not found!", 404);
   }
 
   // 3. Always create — identity is enforced by
@@ -90,8 +91,9 @@ const createGearItem = async (payload: ICreateGearItem, providerId: string) => {
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2002"
     ) {
-      throw new Error(
+      throw new AppError(
         "This gear already exists for your shop! Use restock to add quantity.",
+        409,
       );
     }
     throw error;
@@ -106,7 +108,7 @@ const restockGearItem = async (
   const { quantity } = payload;
 
   if (!Number.isInteger(quantity) || quantity <= 0) {
-    throw new Error("quantity must be a positive integer!");
+    throw new AppError("quantity must be a positive integer!", 400);
   }
 
   const existingItem = await prisma.gearItem.findFirst({
@@ -114,7 +116,7 @@ const restockGearItem = async (
   });
 
   if (!existingItem) {
-    throw new Error("Gear item not found for this provider!");
+    throw new AppError("Gear item not found for this provider!", 404);
   }
 
   const updatedItem = await prisma.gearItem.update({
@@ -149,11 +151,11 @@ const updateGearItem = async (
   } = payload;
 
   if (pricePerDay !== undefined && Number(pricePerDay) <= 0) {
-    throw new Error("pricePerDay must be greater than 0!");
+    throw new AppError("pricePerDay must be greater than 0!", 400);
   }
 
   if (quantity !== undefined && (!Number.isInteger(quantity) || quantity < 0)) {
-    throw new Error("quantity must be a non-negative integer!");
+    throw new AppError("quantity must be a non-negative integer!", 400);
   }
 
   // 1. Ensure the item exists and belongs to this provider
@@ -162,7 +164,7 @@ const updateGearItem = async (
   });
 
   if (!existingItem) {
-    throw new Error("Gear item not found for this provider!");
+    throw new AppError("Gear item not found for this provider!", 404);
   }
 
   // 2. Validate the new category if the category is being changed
@@ -172,7 +174,7 @@ const updateGearItem = async (
     });
 
     if (!category) {
-      throw new Error("Category not found!");
+      throw new AppError("Category not found!", 404);
     }
   }
 
@@ -210,7 +212,7 @@ const updateGearItem = async (
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2002"
     ) {
-      throw new Error("This gear already exists for your shop!");
+      throw new AppError("This gear already exists for your shop!", 409);
     }
     throw error;
   }
@@ -222,7 +224,7 @@ const deleteGearItem = async (itemId: string, providerId: string) => {
   });
 
   if (!existingItem) {
-    throw new Error("Gear item not found for this provider!");
+    throw new AppError("Gear item not found for this provider!", 404);
   }
 
   // Rental orders reference gear with onDelete: Restrict.
@@ -232,8 +234,9 @@ const deleteGearItem = async (itemId: string, providerId: string) => {
   });
 
   if (rentalOrderCount > 0) {
-    throw new Error(
+    throw new AppError(
       "This gear item has rental orders and cannot be removed. Mark it as NOT_AVAILABLE instead.",
+      409,
     );
   }
 
@@ -242,72 +245,6 @@ const deleteGearItem = async (itemId: string, providerId: string) => {
   });
 
   return deletedItem;
-};
-
-const getAllGear = async (filters: {
-  categoryId?: string;
-  brand?: string;
-  minPrice?: number;
-  maxPrice?: number;
-}) => {
-  const { categoryId, brand, minPrice, maxPrice } = filters;
-
-  const where: Prisma.GearItemWhereInput = {};
-
-  if (categoryId) {
-    where.categoryId = categoryId;
-  }
-
-  if (brand) {
-    where.brand = { contains: brand, mode: "insensitive" };
-  }
-
-  if (minPrice !== undefined || maxPrice !== undefined) {
-    where.pricePerDay = {};
-    if (minPrice !== undefined) {
-      where.pricePerDay.gte = new Prisma.Decimal(minPrice.toString());
-    }
-    if (maxPrice !== undefined) {
-      where.pricePerDay.lte = new Prisma.Decimal(maxPrice.toString());
-    }
-  }
-
-  const gearItems = await prisma.gearItem.findMany({
-    where,
-    include: {
-      category: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-
-  return gearItems;
-};
-
-const getGearById = async (id: string) => {
-  const gearItem = await prisma.gearItem.findUnique({
-    where: { id },
-    include: {
-      category: true,
-    },
-  });
-
-  if (!gearItem) {
-    throw new Error("Gear item not found!");
-  }
-
-  return gearItem;
-};
-
-const getAllCategories = async () => {
-  const categories = await prisma.category.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-
-  return categories;
 };
 
 const getRentalOrders = async (providerId: string) => {
@@ -378,7 +315,7 @@ const updateRentalOrderStatus = async (
 ) => {
   // 1. Validate the requested status
   if (!Object.hasOwn(allowedTransitions, newStatus)) {
-    throw new Error("Invalid rental order status");
+    throw new AppError("Invalid rental order status", 400);
   }
 
   // 2. Find the order belonging to this provider's gear
@@ -400,15 +337,16 @@ const updateRentalOrderStatus = async (
   });
 
   if (!order) {
-    throw new Error("Order not found or access denied");
+    throw new AppError("Order not found or access denied", 404);
   }
 
   // 3. Check whether the transition is allowed
   const allowedStatuses = allowedTransitions[order.status];
 
   if (!allowedStatuses.includes(newStatus)) {
-    throw new Error(
-      `Cannot change status from ${order.status} to ${newStatus}`
+    throw new AppError(
+      `Cannot change status from ${order.status} to ${newStatus}`,
+      400,
     );
   }
 
@@ -433,15 +371,11 @@ const updateRentalOrderStatus = async (
   return updatedOrder;
 };
 
-
-export const gearItemService = {
+export const providerService = {
   createGearItem,
   restockGearItem,
   updateGearItem,
   deleteGearItem,
-  getAllGear,
-  getGearById,
-  getAllCategories,
   getRentalOrders,
-  updateRentalOrderStatus
+  updateRentalOrderStatus,
 };

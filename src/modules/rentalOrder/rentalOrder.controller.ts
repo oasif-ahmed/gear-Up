@@ -3,6 +3,7 @@ import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import httpstatus from "http-status-codes";
 import { rentalOrderService } from "./rentalOrder.service";
+import { AppError } from "../../utils/AppError";
 
 const createRentalOrder = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const payload = req.body;
@@ -24,7 +25,7 @@ const getMyRentalOrders = catchAsync(async (req: Request, res: Response, next: N
     const customerId = req.user?.id;
 
     if (!customerId) {
-        throw new Error("Unauthorized! Customer id missing.");
+        throw new AppError("Unauthorized! Customer id missing.", 401);
     }
 
     const rentalOrders = await rentalOrderService.getMyRentalOrders(customerId);
@@ -44,11 +45,11 @@ const getRentalOrderById = catchAsync(async (req: Request, res: Response, next: 
     const customerId = req.user?.id;
 
     if (!customerId) {
-        throw new Error("Unauthorized! Customer id missing.");
+        throw new AppError("Unauthorized! Customer id missing.", 401);
     }
 
     if (!id) {
-        throw new Error("Rental order id is required!");
+        throw new AppError("Rental order id is required!", 400);
     }
 
     const rentalOrder = await rentalOrderService.getRentalOrderById(id, customerId);

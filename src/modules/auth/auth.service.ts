@@ -4,6 +4,7 @@ import { IloginPayload } from "./auth.interface";
 import { jwtUtils } from "../../utils/jwt";
 import config from "../../config";
 import { SignOptions } from "jsonwebtoken";
+import { AppError } from "../../utils/AppError";
 
 const loginUserDB = async (payload: IloginPayload) => {
   const { email, password } = payload;
@@ -15,13 +16,13 @@ const loginUserDB = async (payload: IloginPayload) => {
   });
 
   if (!user || (user && user.activeStatus === "BLOCKED")) {
-    throw new Error("User not found!");
+    throw new AppError("User not found!", 401);
   }
 
   const isPasswordMatch = await bcrypt.compare(password, user.password);
 
   if (!isPasswordMatch) {
-    throw new Error("Password is Incorrect!");
+    throw new AppError("Password is Incorrect!", 401);
   }
 
   // here is the part of creating JWT
