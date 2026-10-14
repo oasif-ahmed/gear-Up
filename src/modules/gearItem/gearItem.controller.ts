@@ -167,7 +167,22 @@ const getRentalOrders = catchAsync(async (req: Request, res: Response, next: Nex
 
 const updateRentalOrderStatus = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const providerId = req.user?.id;
-    const updateStatus = await gearItemService.updateRentalOrderStatus(providerId as string);
+    const newStatus = req.body.status;
+    const rentalOrderId = req.params.id as string;
+
+    if (!providerId) {
+        throw new Error("Unauthorized! Provider id missing.");
+    }
+
+    if (!rentalOrderId) {
+        throw new Error("Rental order id is required!");
+    }
+
+    if (!newStatus) {
+        throw new Error("Rental order status is required!");
+    }
+
+    const updateStatus = await gearItemService.updateRentalOrderStatus(providerId, rentalOrderId, newStatus);
 
     sendResponse(res, {
         success: true,

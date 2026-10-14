@@ -4,7 +4,7 @@ model RentalOrder {
   startDate   DateTime
   endDate     DateTime
   totalAmount Decimal      @default(0) @db.Decimal(10, 2)
-  status      RentalStatus @default(PENDING)
+  status      RentalStatus @default(PLACED)
 
   customer User @relation("CustomerRentalOrders", fields: [customerId], references: [id], onDelete: Restrict)
 
@@ -37,9 +37,10 @@ model RentalOrderItem {
 }
 
 enum RentalStatus {
-  PENDING
+  PLACED
   CONFIRMED
-  ACTIVE
-  COMPLETED
+  PAID
+  PICKED_UP
+  RETURNED
   CANCELLED
 }

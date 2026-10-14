@@ -1,4 +1,4 @@
-import { Prisma } from "../../../generated/prisma/client";
+import { Prisma, RentalStatus } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import {
   ICreateGearItem,
@@ -362,9 +362,77 @@ const getRentalOrders = async (providerId: string) => {
   return orders;
 };
 
-const updateRentalOrderStatus = async (providerId: string) => {
-    const
-}
+const allowedTransitions: Record<RentalStatus, RentalStatus[]> = {
+  PLACED: ["CONFIRMED", "CANCELLED"],
+  CONFIRMED: ["PAID", "CANCELLED"],
+  PAID: ["PICKED_UP", "CANCELLED"],
+  PICKED_UP: ["RETURNED"],
+  RETURNED: [],
+  CANCELLED: [],
+};
+
+const updateRentalOrderStatus = async (
+  providerId: string,
+  orderId: string,
+  newStatus: RentalStatus
+) => {
+  // 1. Validate the requested status
+  if (!Object.hasOwn(allowedTransitions, newStatus)) {
+    throw new Error("Invalid rental order status");
+  }
+
+  // 2. Find the order belonging to this provider's gear
+  const order = await prisma.rentalOrder.findFirst({
+    where: {
+      id: orderId,
+      items: {
+        some: {
+          gearItem: {
+            providerId,
+          },
+        },
+      },
+    },
+    select: {
+      id: true,
+      status: true,
+    },
+  });
+
+  if (!order) {
+    throw new Error("Order not found or access denied");
+  }
+
+  // 3. Check whether the transition is allowed
+  const allowedStatuses = allowedTransitions[order.status];
+
+  if (!allowedStatuses.includes(newStatus)) {
+    throw new Error(
+      `Cannot change status from ${order.status} to ${newStatus}`
+    );
+  }
+
+  // 4. Update the order
+  const updatedOrder = await prisma.rentalOrder.update({
+    where: {
+      id: order.id,
+    },
+    data: {
+      status: newStatus,
+    },
+    select: {
+      id: true,
+      status: true,
+      startDate: true,
+      endDate: true,
+      totalAmount: true,
+      updatedAt: true,
+    },
+  });
+
+  return updatedOrder;
+};
+
 
 export const gearItemService = {
   createGearItem,
