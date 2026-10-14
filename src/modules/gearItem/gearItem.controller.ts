@@ -153,7 +153,30 @@ const getAllCategories = catchAsync(async (req: Request, res: Response, next: Ne
 
 const getRentalOrders = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const providerId = req.user?.id;
-    const result = await gearItemService.getRentalOrders(providerId as string)
+    const rentalOrders = await gearItemService.getRentalOrders(providerId as string);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpstatus.OK,
+        message: "All rental Order retrived successfully!",
+        data: {
+            rentalOrders
+        }
+    })
+});
+
+const updateRentalOrderStatus = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const providerId = req.user?.id;
+    const updateStatus = await gearItemService.updateRentalOrderStatus(providerId as string);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpstatus.OK,
+        message: "Rental status updated successfully!",
+        data: {
+            updateStatus
+        }
+    })
 })
 
 export const gearItemController = {
@@ -164,5 +187,6 @@ export const gearItemController = {
     getAllGear,
     getGearById,
     getAllCategories,
-    getRentalOrders
+    getRentalOrders,
+    updateRentalOrderStatus
 }

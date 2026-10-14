@@ -316,27 +316,55 @@ const getRentalOrders = async (providerId: string) => {
       items: {
         some: {
           gearItem: {
-            providerId: providerId,
+            providerId,
           },
         },
       },
     },
-    include: {
-      customer: true,
+    select: {
+      id: true,
+      startDate: true,
+      endDate: true,
+      totalAmount: true,
+      status: true,
+      createdAt: true,
+
+      customer: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+
       items: {
         where: {
           gearItem: {
-            providerId: providerId,
+            providerId,
           },
         },
-        include: {
-          gearItem: true,
+        select: {
+          id: true,
+          quantity: true,
+          pricePerDay: true,
+
+          gearItem: {
+            select: {
+              id: true,
+              name: true,
+              brand: true,
+              images: true,
+            },
+          },
         },
       },
     },
   });
   return orders;
 };
+
+const updateRentalOrderStatus = async (providerId: string) => {
+    const
+}
 
 export const gearItemService = {
   createGearItem,
@@ -347,4 +375,5 @@ export const gearItemService = {
   getGearById,
   getAllCategories,
   getRentalOrders,
+  updateRentalOrderStatus
 };

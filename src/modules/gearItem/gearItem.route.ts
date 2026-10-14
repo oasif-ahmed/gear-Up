@@ -15,4 +15,6 @@ router.patch("/gear/:id/stock", auth(Role.PROVIDER), gearItemController.restockG
 
 router.get("/orders", auth(Role.PROVIDER), gearItemController.getRentalOrders);
 
+router.patch("orders/:id", auth(Role.PROVIDER), gearItemController.updateRentalOrderStatus);
+
 export const gearItemRoute = router;
