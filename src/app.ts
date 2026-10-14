@@ -8,6 +8,7 @@ import { rentalOrderRoute } from "./modules/rentalOrder/rentalOrder.route";
 import { adminRoute } from "./modules/admin/admin.route";
 import { providerRoute } from "./modules/provider/provider.route";
 import { globalErrorHandler } from "./middleware/globalErrorHandler";
+import { paymentRoute } from "./modules/payments/payment.route";
 
 const app: Application = express();
 
@@ -28,7 +29,8 @@ app.use("/api/admin", categoryRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/provider", providerRoute);
 app.use("/api", gearPublicRoute);
-app.use("/api", rentalOrderRoute)
+app.use("/api", rentalOrderRoute);
+app.use("/api/payments", paymentRoute);
 
 // global error handler (must be last)
 app.use(globalErrorHandler);

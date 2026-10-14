@@ -10,6 +10,8 @@ model RentalOrder {
 
   items RentalOrderItem[]
 
+  payments Payment[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

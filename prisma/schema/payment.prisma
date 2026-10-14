@@ -1,0 +1,24 @@
+model Payment {
+    id String @id @default(uuid())
+    rentalOrderId String
+    transactionId String? @unique //Stripe transaction ID
+    checkoutSessionId String? @unique 
+    amount Decimal @db.Decimal(10, 2)
+    status PaymentStatus @default(PENDING)
+    paidAt DateTime?
+
+    rentalOrder RentalOrder @relation(fields: [rentalOrderId], references: [id], onDelete: Restrict)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([rentalOrderId])
+    @@index([status])
+    @@map("payments")
+}
+
+enum PaymentStatus {
+    PENDING
+    COMPLETED
+    FAILED
+}
