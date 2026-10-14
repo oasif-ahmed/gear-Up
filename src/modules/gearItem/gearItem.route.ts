@@ -13,4 +13,6 @@ router.delete("/gear/:id", auth(Role.PROVIDER), gearItemController.deleteGearIte
 
 router.patch("/gear/:id/stock", auth(Role.PROVIDER), gearItemController.restockGearItem);
 
+router.get("/orders", auth(Role.PROVIDER), gearItemController.getRentalOrders);
+
 export const gearItemRoute = router;

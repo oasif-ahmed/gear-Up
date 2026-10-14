@@ -150,6 +150,12 @@ const getAllCategories = catchAsync(async (req: Request, res: Response, next: Ne
     })
 })
 
+
+const getRentalOrders = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const providerId = req.user?.id;
+    const result = await gearItemService.getRentalOrders(providerId as string)
+})
+
 export const gearItemController = {
     createGearItem,
     restockGearItem,
@@ -157,5 +163,6 @@ export const gearItemController = {
     deleteGearItem,
     getAllGear,
     getGearById,
-    getAllCategories
+    getAllCategories,
+    getRentalOrders
 }
