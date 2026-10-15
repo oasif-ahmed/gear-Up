@@ -6,13 +6,25 @@ import httpstatus from "http-status-codes";
 import { AppError } from "../../utils/AppError";
 
 const getAllGear = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const { categoryId, brand, minPrice, maxPrice } = req.query;
+    const { categoryId, brand, minPrice, maxPrice, search, availability } = req.query;
+
+    const parsedMinPrice = minPrice !== undefined ? Number(minPrice) : undefined;
+    const parsedMaxPrice = maxPrice !== undefined ? Number(maxPrice) : undefined;
+
+    if (parsedMinPrice !== undefined && Number.isNaN(parsedMinPrice)) {
+        throw new AppError("minPrice must be a number!", 400);
+    }
+    if (parsedMaxPrice !== undefined && Number.isNaN(parsedMaxPrice)) {
+        throw new AppError("maxPrice must be a number!", 400);
+    }
 
     const gearItems = await gearItemService.getAllGear({
         categoryId: categoryId as string | undefined,
         brand: brand as string | undefined,
-        minPrice: minPrice !== undefined ? Number(minPrice) : undefined,
-        maxPrice: maxPrice !== undefined ? Number(maxPrice) : undefined,
+        minPrice: parsedMinPrice,
+        maxPrice: parsedMaxPrice,
+        search: search as string | undefined,
+        availability: availability as string | undefined,
     });
 
     sendResponse(res, {

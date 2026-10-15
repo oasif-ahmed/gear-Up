@@ -1,4 +1,5 @@
 import { Prisma } from "../../../generated/prisma/client";
+import { GearStatus } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/AppError";
 
@@ -7,28 +8,53 @@ const getAllGear = async (filters: {
   brand?: string;
   minPrice?: number;
   maxPrice?: number;
+  search?: string;
+  availability?: string;
 }) => {
-  const { categoryId, brand, minPrice, maxPrice } = filters;
+  const { categoryId, brand, minPrice, maxPrice, search, availability } = filters;
 
-  const where: Prisma.GearItemWhereInput = {};
+  const conditions: Prisma.GearItemWhereInput[] = [];
 
   if (categoryId) {
-    where.categoryId = categoryId;
+    conditions.push({ categoryId });
   }
 
   if (brand) {
-    where.brand = { contains: brand, mode: "insensitive" };
+    conditions.push({ brand: { contains: brand, mode: "insensitive" } });
   }
 
   if (minPrice !== undefined || maxPrice !== undefined) {
-    where.pricePerDay = {};
+    const pricePerDay: Prisma.GearItemWhereInput["pricePerDay"] = {};
     if (minPrice !== undefined) {
-      where.pricePerDay.gte = new Prisma.Decimal(minPrice.toString());
+      pricePerDay.gte = new Prisma.Decimal(minPrice.toString());
     }
     if (maxPrice !== undefined) {
-      where.pricePerDay.lte = new Prisma.Decimal(maxPrice.toString());
+      pricePerDay.lte = new Prisma.Decimal(maxPrice.toString());
     }
+    conditions.push({ pricePerDay });
   }
+
+  if (search) {
+    conditions.push({
+      OR: [
+        { name: { contains: search, mode: "insensitive" } },
+        { brand: { contains: search, mode: "insensitive" } },
+      ],
+    });
+  }
+
+  if (availability === "in_stock") {
+    conditions.push({ quantity: { gt: 0 }, status: GearStatus.AVAILABLE });
+  } else if (availability === "out_stock") {
+    conditions.push({
+      OR: [{ quantity: 0 }, { status: GearStatus.NOT_AVAILABLE }],
+    });
+  } else if (availability !== undefined) {
+    throw new AppError("availability must be either in_stock or out_stock!", 400);
+  }
+
+  const where: Prisma.GearItemWhereInput =
+    conditions.length > 0 ? { AND: conditions } : {};
 
   const gearItems = await prisma.gearItem.findMany({
     where,

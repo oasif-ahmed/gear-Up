@@ -41,18 +41,11 @@ export const auth = (...requiredRoles: Role[]) => {
       throw new AppError(verifiedToken.error, 401);
     }
 
-    const { id, name, email, role } = verifiedToken.data as JwtPayload;
-
-    if (requiredRoles.length && !requiredRoles.includes(role)) {
-      throw new AppError("You do not have the access to get the resource.", 403)
-    }
+    const { id } = verifiedToken.data as JwtPayload;
 
     const user = await prisma.user.findUnique({
       where: {
         id,
-        email,
-        name,
-        role
       }
     });
 
@@ -63,11 +56,15 @@ export const auth = (...requiredRoles: Role[]) => {
       throw new AppError("Your account has been blocked. Please contact support.", 403)
     }
 
+    if (requiredRoles.length && !requiredRoles.includes(user.role)) {
+      throw new AppError("You do not have the access to get the resource.", 403)
+    }
+
     req.user = {
-      email,
-      name,
-      id,
-      role
+      email: user.email,
+      name: user.name,
+      id: user.id,
+      role: user.role
     }
     next();
   })

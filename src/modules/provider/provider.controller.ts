@@ -115,7 +115,7 @@ const getRentalOrders = catchAsync(async (req: Request, res: Response, next: Nex
 
 const updateRentalOrderStatus = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const providerId = req.user?.id;
-    const newStatus = req.body.status;
+    const newStatus = req.body?.status;
     const rentalOrderId = req.params.id as string;
 
     if (!providerId) {

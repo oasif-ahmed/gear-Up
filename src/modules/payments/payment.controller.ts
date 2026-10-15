@@ -5,6 +5,7 @@ import { paymentService } from "./payment.service";
 import { sendResponse } from "../../utils/sendResponse";
 import httpstatus from "http-status-codes";
 import config from "../../config";
+import { AppError } from "../../utils/AppError";
 import { stripe } from "../../lib/stripe";
 
 const createPayment = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
@@ -80,7 +81,48 @@ const handleWebhook = catchAsync(
 
 
 
+const getMyPayments = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
+    const customerId = req.user?.id;
+
+    if (!customerId) {
+        throw new AppError("Unauthorized! Customer id missing.", 401);
+    }
+
+    const payments = await paymentService.getMyPayments(customerId);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpstatus.OK,
+        message: "Payment History Retrieved Successfully!",
+        data: {
+            payments
+        }
+    })
+})
+
+const getPaymentById = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
+    const customerId = req.user?.id;
+    const paymentId = req.params.id as string;
+
+    if (!customerId) {
+        throw new AppError("Unauthorized! Customer id missing.", 401);
+    }
+
+    const payment = await paymentService.getPaymentById(paymentId, customerId);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpstatus.OK,
+        message: "Payment Retrieved Successfully!",
+        data: {
+            payment
+        }
+    })
+})
+
 export const paymentController = {
     createPayment,
-    handleWebhook
+    handleWebhook,
+    getMyPayments,
+    getPaymentById
 }

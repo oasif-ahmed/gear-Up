@@ -64,8 +64,29 @@ const getRentalOrderById = catchAsync(async (req: Request, res: Response, next: 
     })
 })
 
+const cancelRentalOrder = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id as string;
+    const customerId = req.user?.id;
+
+    if (!customerId) {
+        throw new AppError("Unauthorized! Customer id missing.", 401);
+    }
+
+    const rentalOrder = await rentalOrderService.cancelRentalOrder(id, customerId);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpstatus.OK,
+        message: "Rental Order Cancelled Successfully!",
+        data: {
+            rentalOrder
+        }
+    })
+})
+
 export const rentalOrderController = {
     createRentalOrder,
     getMyRentalOrders,
-    getRentalOrderById
+    getRentalOrderById,
+    cancelRentalOrder
 }

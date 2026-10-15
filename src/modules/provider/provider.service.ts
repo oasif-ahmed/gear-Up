@@ -6,6 +6,7 @@ import {
   IUpdateGearItem,
 } from "./provider.interface";
 import { AppError } from "../../utils/AppError";
+import { restoreOrderStock } from "../../utils/restoreOrderStock";
 
 const createGearItem = async (payload: ICreateGearItem, providerId: string) => {
   const {
@@ -350,22 +351,30 @@ const updateRentalOrderStatus = async (
     );
   }
 
-  // 4. Update the order
-  const updatedOrder = await prisma.rentalOrder.update({
-    where: {
-      id: order.id,
-    },
-    data: {
-      status: newStatus,
-    },
-    select: {
-      id: true,
-      status: true,
-      startDate: true,
-      endDate: true,
-      totalAmount: true,
-      updatedAt: true,
-    },
+  // 4. Update the order (restock gear when cancelled or returned)
+  const updatedOrder = await prisma.$transaction(async (tx) => {
+    const updated = await tx.rentalOrder.update({
+      where: {
+        id: order.id,
+      },
+      data: {
+        status: newStatus,
+      },
+      select: {
+        id: true,
+        status: true,
+        startDate: true,
+        endDate: true,
+        totalAmount: true,
+        updatedAt: true,
+      },
+    });
+
+    if (newStatus === "CANCELLED" || newStatus === "RETURNED") {
+      await restoreOrderStock(tx, order.id);
+    }
+
+    return updated;
   });
 
   return updatedOrder;

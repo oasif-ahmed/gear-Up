@@ -3,6 +3,7 @@ import httpstatus from "http-status-codes";
 import { userService } from "./user.service";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
+import { AppError } from "../../utils/AppError";
 
 const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -33,7 +34,27 @@ const getUserProfile = catchAsync(async (req: Request, res: Response, next: Next
   })
 })
 
+const updateUserProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.user?.id;
+
+  if (!userId) {
+    throw new AppError("Unauthorized! User id missing.", 401);
+  }
+
+  const profile = await userService.updateUserProfile(userId, req.body);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpstatus.OK,
+    message: "Profile Updated Successfully!",
+    data: {
+      profile
+    }
+  })
+})
+
 export const userController = {
   createUser,
-  getUserProfile
+  getUserProfile,
+  updateUserProfile
 };

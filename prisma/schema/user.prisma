@@ -9,6 +9,7 @@ model User {
   updatedAt    DateTime     @updatedAt
   profile      Profile?
   gearItems    GearItem[]
+  reviews      Review[]
 
   rentalOrders RentalOrder[] @relation("CustomerRentalOrders")
 

@@ -1,9 +1,10 @@
 
 
-import { ActiveStatus, Role } from "../../../generated/prisma/enums";
+import { ActiveStatus, Role, RentalStatus } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import { ICreateRentalOrder } from "./rentalOrder.interface";
 import { AppError } from "../../utils/AppError";
+import { restoreOrderStock } from "../../utils/restoreOrderStock";
 
 const createRentalOrder = async (
   payload: ICreateRentalOrder,
@@ -205,8 +206,68 @@ const getRentalOrderById = async (id: string, customerId: string) => {
   return rentalOrder;
 };
 
+const cancelRentalOrder = async (id: string, customerId: string) => {
+  if (!id) {
+    throw new AppError("Rental order id is required!", 400);
+  }
+
+  const order = await prisma.rentalOrder.findUnique({
+    where: { id },
+    select: { id: true, customerId: true, status: true },
+  });
+
+  if (!order) {
+    throw new AppError("Rental order not found!", 404);
+  }
+
+  if (order.customerId !== customerId) {
+    throw new AppError("Unauthorized! This is not your rental order.", 403);
+  }
+
+  if (
+    order.status !== RentalStatus.PLACED &&
+    order.status !== RentalStatus.CONFIRMED
+  ) {
+    throw new AppError(
+      `Only PLACED or CONFIRMED orders can be cancelled! Current status: ${order.status}`,
+      400,
+    );
+  }
+
+  const updatedOrder = await prisma.$transaction(async (tx) => {
+    const result = await tx.rentalOrder.updateMany({
+      where: {
+        id: order.id,
+        status: { in: [RentalStatus.PLACED, RentalStatus.CONFIRMED] },
+      },
+      data: { status: RentalStatus.CANCELLED },
+    });
+
+    if (result.count !== 1) {
+      throw new AppError("Order can no longer be cancelled!", 409);
+    }
+
+    await restoreOrderStock(tx, order.id);
+
+    return tx.rentalOrder.findUnique({
+      where: { id: order.id },
+      select: {
+        id: true,
+        status: true,
+        startDate: true,
+        endDate: true,
+        totalAmount: true,
+        updatedAt: true,
+      },
+    });
+  });
+
+  return updatedOrder;
+};
+
 export const rentalOrderService = {
   createRentalOrder,
   getMyRentalOrders,
   getRentalOrderById,
+  cancelRentalOrder,
 };

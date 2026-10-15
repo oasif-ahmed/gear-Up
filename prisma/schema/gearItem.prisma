@@ -16,6 +16,7 @@ model GearItem {
   categoryId String
   providerId String
 
+  reviews  Review[]
   category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   provider User     @relation(fields: [providerId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 

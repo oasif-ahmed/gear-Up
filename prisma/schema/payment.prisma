@@ -1,6 +1,6 @@
 model Payment {
     id String @id @default(uuid())
-    rentalOrderId String
+    rentalOrderId String @unique
     transactionId String? @unique //Stripe transaction ID
     checkoutSessionId String? @unique 
     amount Decimal @db.Decimal(10, 2)

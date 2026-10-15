@@ -1,0 +1,366 @@
+{
+  "info": {
+    "name": "GearUp API",
+    "description": "Rent Sports & Outdoor Gear Instantly — backend API collection. Set `token` after logging in (value of `jwtAccessToken` from the login response).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"pass1234\",\n  \"role\": \"CUSTOMER\",\n  \"profilePhoto\": \"\",\n  \"phone\": \"01700000000\",\n  \"bio\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json?.data?.jwtAccessToken) {",
+                  "  pm.collectionVariables.set('token', json.data.jwtAccessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"pass1234\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Current User (me)",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api", "auth", "me"] }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PATCH",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api", "auth", "me"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"bio\": \"Love outdoor sports\",\n  \"phone\": \"01700000000\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Gear & Categories (Public)",
+      "item": [
+        {
+          "name": "Get All Gear (filters)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/gear?search=tent&availability=in_stock&minPrice=100&maxPrice=5000&brand=Quechua",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "gear"],
+              "query": [
+                { "key": "categoryId", "value": "", "description": "Filter by category id", "disabled": true },
+                { "key": "brand", "value": "Quechua", "disabled": true },
+                { "key": "minPrice", "value": "100", "disabled": true },
+                { "key": "maxPrice", "value": "5000", "disabled": true },
+                { "key": "search", "value": "tent", "description": "Search by name or brand (case-insensitive)" },
+                { "key": "availability", "value": "in_stock", "description": "in_stock | out_stock" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Gear Details",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/gear/:id", "host": ["{{baseUrl}}"], "path": ["api", "gear", ":id"], "variable": [{ "key": "id", "value": "GEAR_ITEM_ID" }] }
+          }
+        },
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/categories", "host": ["{{baseUrl}}"], "path": ["api", "categories"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rental Orders",
+      "item": [
+        {
+          "name": "Create Rental Order",
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/rentals", "host": ["{{baseUrl}}"], "path": ["api", "rentals"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"startDate\": \"2026-11-01\",\n  \"endDate\": \"2026-11-04\",\n  \"items\": [\n    { \"gearItemId\": \"GEAR_ITEM_ID\", \"quantity\": 1 }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Get My Rental Orders",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/rentals", "host": ["{{baseUrl}}"], "path": ["api", "rentals"] }
+          }
+        },
+        {
+          "name": "Get Rental Order Details",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/rentals/:id", "host": ["{{baseUrl}}"], "path": ["api", "rentals", ":id"], "variable": [{ "key": "id", "value": "RENTAL_ORDER_ID" }] }
+          }
+        },
+        {
+          "name": "Cancel Rental Order (customer)",
+          "request": {
+            "method": "PATCH",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/rentals/:id/cancel", "host": ["{{baseUrl}}"], "path": ["api", "rentals", ":id", "cancel"], "variable": [{ "key": "id", "value": "RENTAL_ORDER_ID" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create Payment (Stripe Checkout)",
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/payments/create", "host": ["{{baseUrl}}"], "path": ["api", "payments", "create"] },
+            "body": { "mode": "raw", "raw": "{\n  \"rentalOrderId\": \"RENTAL_ORDER_ID\"\n}" }
+          }
+        },
+        {
+          "name": "Payment Webhook (Stripe callback)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/payments/webhook", "host": ["{{baseUrl}}"], "path": ["api", "payments", "webhook"] },
+            "description": "Called by Stripe with a signed event payload. Use `npm run stripe:listen` for local testing."
+          }
+        },
+        {
+          "name": "Get Payment History",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/payments", "host": ["{{baseUrl}}"], "path": ["api", "payments"] }
+          }
+        },
+        {
+          "name": "Get Payment Details",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/payments/:id", "host": ["{{baseUrl}}"], "path": ["api", "payments", ":id"], "variable": [{ "key": "id", "value": "PAYMENT_ID" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/reviews", "host": ["{{baseUrl}}"], "path": ["api", "reviews"] },
+            "body": { "mode": "raw", "raw": "{\n  \"gearItemId\": \"GEAR_ITEM_ID\",\n  \"rating\": 5,\n  \"comment\": \"Great gear!\"\n}" }
+          }
+        },
+        {
+          "name": "Get Reviews For Gear",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/reviews/gear/:gearItemId", "host": ["{{baseUrl}}"], "path": ["api", "reviews", "gear", ":gearItemId"], "variable": [{ "key": "gearItemId", "value": "GEAR_ITEM_ID" }] }
+          }
+        },
+        {
+          "name": "Get My Reviews",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/reviews/my-reviews", "host": ["{{baseUrl}}"], "path": ["api", "reviews", "my-reviews"] }
+          }
+        },
+        {
+          "name": "Update Review",
+          "request": {
+            "method": "PATCH",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/reviews/:id", "host": ["{{baseUrl}}"], "path": ["api", "reviews", ":id"], "variable": [{ "key": "id", "value": "REVIEW_ID" }] },
+            "body": { "mode": "raw", "raw": "{\n  \"rating\": 4,\n  \"comment\": \"Updated comment\"\n}" }
+          }
+        },
+        {
+          "name": "Delete Review",
+          "request": {
+            "method": "DELETE",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/reviews/:id", "host": ["{{baseUrl}}"], "path": ["api", "reviews", ":id"], "variable": [{ "key": "id", "value": "REVIEW_ID" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Provider",
+      "item": [
+        {
+          "name": "Add Gear",
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/provider/gear", "host": ["{{baseUrl}}"], "path": ["api", "provider", "gear"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Quechua 2P Tent\",\n  \"description\": \"2 person camping tent\",\n  \"brand\": \"Quechua\",\n  \"categoryId\": \"CATEGORY_ID\",\n  \"condition\": \"GOOD\",\n  \"pricePerDay\": 500,\n  \"quantity\": 3,\n  \"images\": [],\n  \"specifications\": {}\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Gear",
+          "request": {
+            "method": "PUT",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/provider/gear/:id", "host": ["{{baseUrl}}"], "path": ["api", "provider", "gear", ":id"], "variable": [{ "key": "id", "value": "GEAR_ITEM_ID" }] },
+            "body": { "mode": "raw", "raw": "{\n  \"pricePerDay\": 450,\n  \"description\": \"Updated description\"\n}" }
+          }
+        },
+        {
+          "name": "Delete Gear",
+          "request": {
+            "method": "DELETE",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/provider/gear/:id", "host": ["{{baseUrl}}"], "path": ["api", "provider", "gear", ":id"], "variable": [{ "key": "id", "value": "GEAR_ITEM_ID" }] }
+          }
+        },
+        {
+          "name": "Restock Gear",
+          "request": {
+            "method": "PATCH",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/provider/gear/:id/stock", "host": ["{{baseUrl}}"], "path": ["api", "provider", "gear", ":id", "stock"], "variable": [{ "key": "id", "value": "GEAR_ITEM_ID" }] },
+            "body": { "mode": "raw", "raw": "{\n  \"quantity\": 5\n}" }
+          }
+        },
+        {
+          "name": "Get Provider Orders",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/provider/orders", "host": ["{{baseUrl}}"], "path": ["api", "provider", "orders"] }
+          }
+        },
+        {
+          "name": "Update Order Status",
+          "request": {
+            "method": "PATCH",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/provider/orders/:id", "host": ["{{baseUrl}}"], "path": ["api", "provider", "orders", ":id"], "variable": [{ "key": "id", "value": "RENTAL_ORDER_ID" }] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"CONFIRMED\"\n}" },
+            "description": "Allowed transitions:\nPLACED → CONFIRMED | CANCELLED\nCONFIRMED → PAID | CANCELLED\nPAID → PICKED_UP | CANCELLED\nPICKED_UP → RETURNED\n\nStock is restored automatically on CANCELLED and RETURNED."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/admin/users", "host": ["{{baseUrl}}"], "path": ["api", "admin", "users"] }
+          }
+        },
+        {
+          "name": "Update User Status (suspend/activate)",
+          "request": {
+            "method": "PATCH",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/admin/users/:id", "host": ["{{baseUrl}}"], "path": ["api", "admin", "users", ":id"], "variable": [{ "key": "id", "value": "USER_ID" }] },
+            "body": { "mode": "raw", "raw": "{\n  \"activeStatus\": \"SUSPEND\"\n}" }
+          }
+        },
+        {
+          "name": "Get All Gear",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/admin/gear", "host": ["{{baseUrl}}"], "path": ["api", "admin", "gear"] }
+          }
+        },
+        {
+          "name": "Get All Rental Orders",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "url": { "raw": "{{baseUrl}}/api/admin/rentals", "host": ["{{baseUrl}}"], "path": ["api", "admin", "rentals"] }
+          }
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/api/admin/categories", "host": ["{{baseUrl}}"], "path": ["api", "admin", "categories"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Camping\",\n  \"description\": \"Tents, sleeping bags and camp gear\",\n  \"image\": \"\"\n}" }
+          }
+        },
+        {
+          "name": "Get Categories (with gear)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/admin/categories", "host": ["{{baseUrl}}"], "path": ["api", "admin", "categories"] }
+          }
+        }
+      ]
+    }
+  ]
+}

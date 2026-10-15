@@ -5,6 +5,7 @@ import { jwtUtils } from "../../utils/jwt";
 import config from "../../config";
 import { SignOptions } from "jsonwebtoken";
 import { AppError } from "../../utils/AppError";
+import { ActiveStatus } from "../../../generated/prisma/enums";
 
 const loginUserDB = async (payload: IloginPayload) => {
   const { email, password } = payload;
@@ -15,8 +16,12 @@ const loginUserDB = async (payload: IloginPayload) => {
     },
   });
 
-  if (!user || (user && user.activeStatus === "BLOCKED")) {
+  if (!user) {
     throw new AppError("User not found!", 401);
+  }
+
+  if (user.activeStatus === ActiveStatus.SUSPEND) {
+    throw new AppError("Your account has been suspended!", 403);
   }
 
   const isPasswordMatch = await bcrypt.compare(password, user.password);
