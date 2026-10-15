@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { catchAsync } from "../../utils/catchAsync";
-import { gearItemService } from "./gearItem.service";
-import { sendResponse } from "../../utils/sendResponse";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { gearItemService } from "./gearItem.service.js";
+import { sendResponse } from "../../utils/sendResponse.js";
 import httpstatus from "http-status-codes";
-import { AppError } from "../../utils/AppError";
+import { AppError } from "../../utils/AppError.js";
 
 const getAllGear = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { categoryId, brand, minPrice, maxPrice, search, availability } = req.query;

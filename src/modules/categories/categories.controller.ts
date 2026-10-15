@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { catchAsync } from "../../utils/catchAsync";
-import { categoryService } from "./categories.service";
-import { sendResponse } from "../../utils/sendResponse";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { categoryService } from "./categories.service.js";
+import { sendResponse } from "../../utils/sendResponse.js";
 import httpstatus from "http-status-codes";
 
 const createCategories = catchAsync(async (req: Request, res: Response, next: NextFunction) => {

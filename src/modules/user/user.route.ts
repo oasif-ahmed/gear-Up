@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { userController } from "./user.controller";
-import { Role } from "../../../generated/prisma/enums";
-import { auth } from "../../middleware/auth";
+import { userController } from "./user.controller.js";
+import { Role } from "../../../generated/prisma/enums.js";
+import { auth } from "../../middleware/auth.js";
 
 const router = Router();
 

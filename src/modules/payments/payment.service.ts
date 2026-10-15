@@ -1,8 +1,8 @@
 import Stripe from "stripe";
-import { Prisma } from "../../../generated/prisma/client";
-import { prisma } from "../../lib/prisma";
-import { stripe } from "../../lib/stripe";
-import { AppError } from "../../utils/AppError";
+import { Prisma } from "../../../generated/prisma/client.js";
+import { prisma } from "../../lib/prisma.js";
+import { stripe } from "../../lib/stripe.js";
+import { AppError } from "../../utils/AppError.js";
 
 const createPayment = async (rentalOrderId: string, customerId: string) => {
   if (!rentalOrderId) {

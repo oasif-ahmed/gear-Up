@@ -1,7 +1,7 @@
-import { Prisma } from "../../../generated/prisma/client";
-import { GearStatus } from "../../../generated/prisma/enums";
-import { prisma } from "../../lib/prisma";
-import { AppError } from "../../utils/AppError";
+import { Prisma } from "../../../generated/prisma/client.js";
+import { GearStatus } from "../../../generated/prisma/enums.js";
+import { prisma } from "../../lib/prisma.js";
+import { AppError } from "../../utils/AppError.js";
 
 const getAllGear = async (filters: {
   categoryId?: string;

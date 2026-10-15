@@ -1,8 +1,8 @@
-import { Prisma } from "../../../generated/prisma/client";
-import { RentalStatus } from "../../../generated/prisma/enums";
-import { prisma } from "../../lib/prisma";
-import { AppError } from "../../utils/AppError";
-import { ICreateReview, IUpdateReview } from "./review.interface";
+import { Prisma } from "../../../generated/prisma/client.js";
+import { RentalStatus } from "../../../generated/prisma/enums.js";
+import { prisma } from "../../lib/prisma.js";
+import { AppError } from "../../utils/AppError.js";
+import { ICreateReview, IUpdateReview } from "./review.interface.js";
 
 const reviewSelect = {
   id: true,

@@ -1,6 +1,6 @@
-import { prisma } from "../../lib/prisma";
-import { AppError } from "../../utils/AppError";
-import { IcreateCategories } from "./categories.interface"
+import { prisma } from "../../lib/prisma.js";
+import { AppError } from "../../utils/AppError.js";
+import { IcreateCategories } from "./categories.interface.js"
 
 const createCategories = async (payload: IcreateCategories) => {
     const {name, description, image} = payload;

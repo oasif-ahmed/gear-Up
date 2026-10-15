@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { catchAsync } from "../../utils/catchAsync";
-import { sendResponse } from "../../utils/sendResponse";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { sendResponse } from "../../utils/sendResponse.js";
 import httpstatus from "http-status-codes";
-import { rentalOrderService } from "./rentalOrder.service";
-import { AppError } from "../../utils/AppError";
+import { rentalOrderService } from "./rentalOrder.service.js";
+import { AppError } from "../../utils/AppError.js";
 
 const createRentalOrder = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const payload = req.body;

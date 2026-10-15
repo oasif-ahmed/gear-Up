@@ -1,11 +1,11 @@
 import bcrypt from "bcrypt";
-import { prisma } from "../../lib/prisma";
-import { IloginPayload } from "./auth.interface";
-import { jwtUtils } from "../../utils/jwt";
-import config from "../../config";
+import { prisma } from "../../lib/prisma.js";
+import { IloginPayload } from "./auth.interface.js";
+import { jwtUtils } from "../../utils/jwt.js";
+import config from "../../config/index.js";
 import { SignOptions } from "jsonwebtoken";
-import { AppError } from "../../utils/AppError";
-import { ActiveStatus } from "../../../generated/prisma/enums";
+import { AppError } from "../../utils/AppError.js";
+import { ActiveStatus } from "../../../generated/prisma/enums.js";
 
 const loginUserDB = async (payload: IloginPayload) => {
   const { email, password } = payload;

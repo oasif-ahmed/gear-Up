@@ -1,10 +1,10 @@
 
 
-import { ActiveStatus, Role, RentalStatus } from "../../../generated/prisma/enums";
-import { prisma } from "../../lib/prisma";
-import { ICreateRentalOrder } from "./rentalOrder.interface";
-import { AppError } from "../../utils/AppError";
-import { restoreOrderStock } from "../../utils/restoreOrderStock";
+import { ActiveStatus, Role, RentalStatus } from "../../../generated/prisma/enums.js";
+import { prisma } from "../../lib/prisma.js";
+import { ICreateRentalOrder } from "./rentalOrder.interface.js";
+import { AppError } from "../../utils/AppError.js";
+import { restoreOrderStock } from "../../utils/restoreOrderStock.js";
 
 const createRentalOrder = async (
   payload: ICreateRentalOrder,

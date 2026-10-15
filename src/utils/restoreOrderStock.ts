@@ -1,4 +1,4 @@
-import { Prisma } from "../../generated/prisma/client";
+import { Prisma } from "../../generated/prisma/client.js";
 
 export const restoreOrderStock = async (
   tx: Prisma.TransactionClient,

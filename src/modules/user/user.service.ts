@@ -1,9 +1,9 @@
 import bcrypt from "bcrypt";
-import { Prisma } from "../../../generated/prisma/client";
-import { prisma } from "../../lib/prisma";
-import config from "../../config";
-import { CreateUserPayload, UpdateUserPayload } from "./user.interface";
-import { AppError } from "../../utils/AppError";
+import { Prisma } from "../../../generated/prisma/client.js";
+import { prisma } from "../../lib/prisma.js";
+import config from "../../config/index.js";
+import { CreateUserPayload, UpdateUserPayload } from "./user.interface.js";
+import { AppError } from "../../utils/AppError.js";
 
 const createUserIntoDB = async (payload: CreateUserPayload) => {
   const { name, email, password, role, profilePhoto, phone, bio } = payload;

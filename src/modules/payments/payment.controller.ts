@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from "express"
 import Stripe from "stripe";
-import { catchAsync } from "../../utils/catchAsync"
-import { paymentService } from "./payment.service";
-import { sendResponse } from "../../utils/sendResponse";
+import { catchAsync } from "../../utils/catchAsync.js"
+import { paymentService } from "./payment.service.js";
+import { sendResponse } from "../../utils/sendResponse.js";
 import httpstatus from "http-status-codes";
-import config from "../../config";
-import { AppError } from "../../utils/AppError";
-import { stripe } from "../../lib/stripe";
+import config from "../../config/index.js";
+import { AppError } from "../../utils/AppError.js";
+import { stripe } from "../../lib/stripe.js";
 
 const createPayment = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
     const {rentalOrderId} = req.body;

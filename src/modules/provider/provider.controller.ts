@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { catchAsync } from "../../utils/catchAsync";
-import { providerService } from "./provider.service";
-import { sendResponse } from "../../utils/sendResponse";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { providerService } from "./provider.service.js";
+import { sendResponse } from "../../utils/sendResponse.js";
 import httpstatus from "http-status-codes";
-import { AppError } from "../../utils/AppError";
+import { AppError } from "../../utils/AppError.js";
 
 const createGearItem = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const payload = req.body;

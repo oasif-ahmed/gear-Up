@@ -1,12 +1,12 @@
-import { Prisma, RentalStatus } from "../../../generated/prisma/client";
-import { prisma } from "../../lib/prisma";
+import { Prisma, RentalStatus } from "../../../generated/prisma/client.js";
+import { prisma } from "../../lib/prisma.js";
 import {
   ICreateGearItem,
   IRestockGearItem,
   IUpdateGearItem,
-} from "./provider.interface";
-import { AppError } from "../../utils/AppError";
-import { restoreOrderStock } from "../../utils/restoreOrderStock";
+} from "./provider.interface.js";
+import { AppError } from "../../utils/AppError.js";
+import { restoreOrderStock } from "../../utils/restoreOrderStock.js";
 
 const createGearItem = async (payload: ICreateGearItem, providerId: string) => {
   const {
