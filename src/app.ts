@@ -12,6 +12,13 @@ import { paymentRoute } from "./modules/payments/payment.route";
 
 const app: Application = express();
 
+// Stripe webhook needs the raw body for signature verification,
+// so it must be mounted before express.json()
+app.use(
+  "/api/payments/webhook",
+  express.raw({ type: "application/json" }),
+);
+
 // middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

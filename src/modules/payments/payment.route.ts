@@ -7,4 +7,6 @@ const router = Router();
 
 router.post("/create",auth(Role.CUSTOMER), paymentController.createPayment);
 
+router.post("/webhook", paymentController.handleWebhook);
+
 export const paymentRoute = router;
