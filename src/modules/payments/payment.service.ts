@@ -89,7 +89,7 @@ const createPayment = async (rentalOrderId: string, customerId: string) => {
     line_items: [
       {
         price_data: {
-          currency: "bdt",
+          currency: "usd",
           product_data: {
             name: "GearUp Rental",
           },
