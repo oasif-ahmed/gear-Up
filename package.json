@@ -2,12 +2,14 @@
   "name": "gearup",
   "version": "1.0.0",
   "description": "",
-  "main": "server.ts",
+  "main": "src/main.ts",
   "scripts": {
     "stripe:listen": "stripe listen --events checkout.session.completed,checkout.session.async_payment_succeeded,checkout.session.expired --forward-to localhost:3000/api/payments/webhook",
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch src/main.ts",
+    "postinstall": "prisma generate",
+    "build": "prisma generate && tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/server.js"
+    "start": "node dist/src/main.js"
   },
   "keywords": [],
   "author": "",
