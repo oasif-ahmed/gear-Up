@@ -1,0 +1,721 @@
+{
+  "v": 12,
+  "id": "coll_5132fa21-e3c9-4fb3-93c2-1c7a063f4d71",
+  "name": "gearUp-Backend",
+  "folders": [],
+  "requests": [
+    {
+      "v": "17",
+      "id": "37dee0f0-7d30-48fb-a12d-cfe3d7464ceb",
+      "name": "register-user",
+      "method": "POST",
+      "endpoint": "http://localhost:3000/api/auth/register",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"name\": \"asif\",\n  \"email\": \"asif@gmail.com\",\n  \"password\": \"asif123\",\n  \"role\": \"ADMIN\",\n  \"profilePhoto\": \"www.jpg.jpg\",\n  \"phone\": \"01734449960\",\n  \"bio\": \"I am asif\"\n}"
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: Public. role = CUSTOMER | PROVIDER | ADMIN"
+    },
+    {
+      "v": "17",
+      "id": "fe8f1092-7285-4cdc-9953-4fceb6c30296",
+      "name": "login-user",
+      "method": "POST",
+      "endpoint": "http://localhost:3000/api/auth/login",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"email\": \"jony@gmail.com\",\n  \"password\": \"jony123\"\n}"
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: Public. Returns jwtAccessToken -> use as Bearer token for protected routes."
+    },
+    {
+      "v": "17",
+      "id": "259ff13f-cefb-4aa5-8257-eeff9110c2f3",
+      "name": "get-current-user",
+      "method": "GET",
+      "endpoint": "http://localhost:3000/api/auth/me",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: CUSTOMER | PROVIDER | ADMIN"
+    },
+    {
+      "v": "17",
+      "id": "40798a35-790c-4f1f-a1e3-20fbd8d75c4f",
+      "name": "update-profile",
+      "method": "PATCH",
+      "endpoint": "http://localhost:3000/api/auth/me",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"name\": \"asif updated\",\n  \"bio\": \"I am asif\",\n  \"phone\": \"01734449960\"\n}"
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: CUSTOMER | PROVIDER | ADMIN"
+    },
+    {
+      "v": "17",
+      "id": "cd1b765d-39d6-4556-a5ad-8ffc9af99822",
+      "name": "get-all-gear-with-filters",
+      "method": "GET",
+      "endpoint": "http://localhost:3000/api/gear?search=tent&availability=in_stock&brand=canon&minPrice=0&maxPrice=100000",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: Public. Optional query params: categoryId, brand, minPrice, maxPrice, search, availability (in_stock | out_stock)."
+    },
+    {
+      "v": "17",
+      "id": "568a2f9d-295e-4e15-92d2-4cf0b801e63a",
+      "name": "get-gear-by-id",
+      "method": "GET",
+      "endpoint": "http://localhost:3000/api/gear/39bcc172-17e9-4902-9460-75122f8b2abf",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: Public"
+    },
+    {
+      "v": "17",
+      "id": "d2e183a2-822b-4302-a351-7714693a0a30",
+      "name": "get-all-categories",
+      "method": "GET",
+      "endpoint": "http://localhost:3000/api/categories",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: Public"
+    },
+    {
+      "v": "17",
+      "id": "0f65f742-d5c5-47c2-9966-c0f82a15fcbe",
+      "name": "create-rental-order",
+      "method": "POST",
+      "endpoint": "http://localhost:3000/api/rentals",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"startDate\": \"2026-10-20\",\n  \"endDate\": \"2026-10-25\",\n  \"items\": [\n    {\n      \"gearItemId\": \"02c1446d-fd5e-4681-9ff8-da8d1ee8a3a6\",\n      \"quantity\": 4\n    },\n    {\n      \"gearItemId\": \"39bcc172-17e9-4902-9460-75122f8b2abf\",\n      \"quantity\": 2\n    }\n  ]\n}"
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: CUSTOMER. totalAmount is calculated by the server; stock is reduced automatically."
+    },
+    {
+      "v": "17",
+      "id": "6a237b54-fd32-4bae-bc17-99de7ddd8145",
+      "name": "get-my-rental-orders",
+      "method": "GET",
+      "endpoint": "http://localhost:3000/api/rentals",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: CUSTOMER"
+    },
+    {
+      "v": "17",
+      "id": "b7a8aac7-2eae-479a-8dc8-2aa25f9974be",
+      "name": "get-rental-order-by-id",
+      "method": "GET",
+      "endpoint": "http://localhost:3000/api/rentals/a4198a44-e3a0-46da-8f9e-1bd77eb03fbb",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: CUSTOMER"
+    },
+    {
+      "v": "17",
+      "id": "168f4626-7b2d-4be2-8f5f-4bdfabe36873",
+      "name": "cancel-rental-order",
+      "method": "PATCH",
+      "endpoint": "http://localhost:3000/api/rentals/a4198a44-e3a0-46da-8f9e-1bd77eb03fbb/cancel",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: CUSTOMER (own order). Only PLACED or CONFIRMED orders. Stock is restored automatically."
+    },
+    {
+      "v": "17",
+      "id": "bf27d1db-1099-4a88-827a-28871ebb7f33",
+      "name": "create-stripe-payment-url",
+      "method": "POST",
+      "endpoint": "http://localhost:3000/api/payments/create",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"rentalOrderId\": \"a4198a44-e3a0-46da-8f9e-1bd77eb03fbb\"\n}"
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: CUSTOMER. Order must be CONFIRMED. Returns checkoutUrl to pay on Stripe."
+    },
+    {
+      "v": "17",
+      "id": "e4a2bf72-b73c-4bc9-8513-f6d1a511512a",
+      "name": "stripe-webhook",
+      "method": "POST",
+      "endpoint": "http://localhost:3000/api/payments/webhook",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: Stripe only. Called by Stripe with a signed event; do not trigger manually (use npm run stripe:listen)."
+    },
+    {
+      "v": "17",
+      "id": "17ec9b78-fd8f-4504-b95d-db8b38875d42",
+      "name": "payment-history",
+      "method": "GET",
+      "endpoint": "http://localhost:3000/api/payments",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: CUSTOMER"
+    },
+    {
+      "v": "17",
+      "id": "586970d1-aa24-4185-9ca9-f34709d60ab3",
+      "name": "payment-by-payment-id",
+      "method": "GET",
+      "endpoint": "http://localhost:3000/api/payments/85c6bac4-dc95-4ca5-8df6-9fd026a119e5",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: CUSTOMER"
+    },
+    {
+      "v": "17",
+      "id": "459d7ba9-daf9-4fa6-8e25-4f903e6f56ab",
+      "name": "post-review",
+      "method": "POST",
+      "endpoint": "http://localhost:3000/api/reviews",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"gearItemId\": \"5235d212-f73a-4ca4-bf13-a75a1e93a9a2\",\n  \"rating\": 5,\n  \"comment\": \"Great gear, smooth ride!\"\n}"
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: CUSTOMER. Allowed only after the rental with that gear is RETURNED. rating = 1..5 integer."
+    },
+    {
+      "v": "17",
+      "id": "561306a2-008a-42cd-8ea9-ecb99a890174",
+      "name": "get-reviews-by-gear-item-id",
+      "method": "GET",
+      "endpoint": "http://localhost:3000/api/reviews/gear/5235d212-f73a-4ca4-bf13-a75a1e93a9a2",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: Public. Returns reviews + averageRating + totalReviews."
+    },
+    {
+      "v": "17",
+      "id": "d305e7f7-2cad-40bd-9ba2-114ab5401b9b",
+      "name": "get-my-reviews",
+      "method": "GET",
+      "endpoint": "http://localhost:3000/api/reviews/my-reviews",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: CUSTOMER"
+    },
+    {
+      "v": "17",
+      "id": "993c7bf6-d335-45f8-99c7-38c6c7b7c856",
+      "name": "update-review",
+      "method": "PATCH",
+      "endpoint": "http://localhost:3000/api/reviews/3ea3f942-024e-4447-a3a9-d1a926d15b4b",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"rating\": 4,\n  \"comment\": \"Updated comment\"\n}"
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: CUSTOMER (own review). Send at least one of rating / comment."
+    },
+    {
+      "v": "17",
+      "id": "54eeae1a-1b1c-455d-84ed-68d5c8ff7486",
+      "name": "delete-review",
+      "method": "DELETE",
+      "endpoint": "http://localhost:3000/api/reviews/3ea3f942-024e-4447-a3a9-d1a926d15b4b",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: CUSTOMER (own review)."
+    },
+    {
+      "v": "17",
+      "id": "141eb432-d7dd-49d3-871c-562fd907caf9",
+      "name": "create-gear-item",
+      "method": "POST",
+      "endpoint": "http://localhost:3000/api/provider/gear",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"name\": \"Manfrotto Professional Tripod\",\n  \"description\": \"Stable professional tripod for studio photography, landscape shoots, and video recording.\",\n  \"brand\": \"Manfrotto\",\n  \"images\": [\n    \"https://example.com/gear/manfrotto-tripod-1.jpg\",\n    \"https://example.com/gear/manfrotto-tripod-2.jpg\"\n  ],\n  \"specifications\": {\n    \"Material\": \"Aluminum\",\n    \"MaximumHeight\": \"170cm\",\n    \"LoadCapacity\": \"9kg\",\n    \"HeadType\": \"Fluid Video Head\"\n  },\n  \"condition\": \"GOOD\",\n  \"pricePerDay\": 8,\n  \"securityDeposit\": 30,\n  \"quantity\": 5,\n  \"status\": \"AVAILABLE\",\n  \"categoryId\": \"ab0bdc52-9d4b-4a0c-8ae4-7f79e847c08b\"\n}"
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: PROVIDER. Required: name, description, categoryId, pricePerDay. condition = NEW | LIKE_NEW | GOOD | FAIR, status = AVAILABLE | NOT_AVAILABLE."
+    },
+    {
+      "v": "17",
+      "id": "850de756-952c-47c8-aad0-b98db78535d8",
+      "name": "update-gear-item",
+      "method": "PUT",
+      "endpoint": "http://localhost:3000/api/provider/gear/7358fe16-b600-4239-a494-aa6b19021a69",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"pricePerDay\": 450,\n  \"quantity\": 10,\n  \"condition\": \"LIKE_NEW\",\n  \"description\": \"Updated description\",\n  \"specifications\": {\n    \"Material\": \"Aluminum\",\n    \"LoadCapacity\": \"9kg\"\n  }\n}"
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: PROVIDER (own listing). All fields optional — send only what changes."
+    },
+    {
+      "v": "17",
+      "id": "332bf730-15f6-45ec-877a-a232ce485334",
+      "name": "delete-gear-item",
+      "method": "DELETE",
+      "endpoint": "http://localhost:3000/api/provider/gear/7358fe16-b600-4239-a494-aa6b19021a69",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: PROVIDER (own listing). Blocked (409) if the item has rental history."
+    },
+    {
+      "v": "17",
+      "id": "6762ea6c-a4dd-4682-a59d-b1228dbe304a",
+      "name": "restock-gear-item",
+      "method": "PATCH",
+      "endpoint": "http://localhost:3000/api/provider/gear/7358fe16-b600-4239-a494-aa6b19021a69/stock",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"quantity\": 7\n}"
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: PROVIDER. Adds the given quantity to current stock."
+    },
+    {
+      "v": "17",
+      "id": "cdedf618-9f99-40cc-aa2e-3412c51253e5",
+      "name": "get-provider-orders",
+      "method": "GET",
+      "endpoint": "http://localhost:3000/api/provider/orders",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: PROVIDER"
+    },
+    {
+      "v": "17",
+      "id": "92bda86d-c6f3-4ef6-9224-3f0573cf8c2a",
+      "name": "update-rental-order-status",
+      "method": "PATCH",
+      "endpoint": "http://localhost:3000/api/provider/orders/2c87c177-b598-4adf-b41d-1234ca470997",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"status\": \"CONFIRMED\"\n}"
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: PROVIDER. Flow: PLACED -> CONFIRMED -> PAID -> PICKED_UP -> RETURNED. CANCELLED before pickup. Stock auto-restores on CANCELLED / RETURNED."
+    },
+    {
+      "v": "17",
+      "id": "2bfd180b-2060-4ab6-8203-ed9bdfee0e8b",
+      "name": "get-all-users",
+      "method": "GET",
+      "endpoint": "http://localhost:3000/api/admin/users",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: ADMIN"
+    },
+    {
+      "v": "17",
+      "id": "5d15ee29-b60e-498c-95e8-d0d47bb0799f",
+      "name": "update-user-status",
+      "method": "PATCH",
+      "endpoint": "http://localhost:3000/api/admin/users/721ee59f-e778-4ba5-8ccc-6c8a4b177468",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"activeStatus\": \"SUSPEND\"\n}"
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: ADMIN. activeStatus = ACTIVE | SUSPEND."
+    },
+    {
+      "v": "17",
+      "id": "bd161625-33ad-4627-b244-8891b3bc4095",
+      "name": "get-all-gears-admin",
+      "method": "GET",
+      "endpoint": "http://localhost:3000/api/admin/gear",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: ADMIN"
+    },
+    {
+      "v": "17",
+      "id": "827a1054-5d77-4c63-a640-ba1acf94e002",
+      "name": "get-all-rental-orders",
+      "method": "GET",
+      "endpoint": "http://localhost:3000/api/admin/rentals",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: ADMIN"
+    },
+    {
+      "v": "17",
+      "id": "87eb067b-e95f-4af2-8758-fc32e3f6a2f7",
+      "name": "create-categories",
+      "method": "POST",
+      "endpoint": "http://localhost:3000/api/admin/categories",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"name\": \"Cycling\",\n  \"image\": \"camping-image.jpg\",\n  \"description\": \"This is a category of camping. This is one of the most busiest category of this app.\"\n}"
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: ADMIN. name is required and unique."
+    },
+    {
+      "v": "17",
+      "id": "0e1c2653-fdeb-4655-a45c-65924440949a",
+      "name": "get-categories-admin",
+      "method": "GET",
+      "endpoint": "http://localhost:3000/api/admin/categories",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {},
+      "description": "Access: Public. Same data as /api/categories but includes nested gearItems."
+    }
+  ],
+  "description": "GearUp backend API. Login first, then set the returned jwtAccessToken as the Bearer token (Auth tab) on protected requests.",
+  "auth": {
+    "authType": "none",
+    "authActive": true
+  },
+  "headers": [],
+  "variables": [],
+  "preRequestScript": "",
+  "testScript": ""
+}
