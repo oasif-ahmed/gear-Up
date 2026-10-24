@@ -1,0 +1,1430 @@
+{
+  "info": {
+    "name": "GearUp API - 2",
+    "description": "Rent Sports & Outdoor Gear Instantly — backend API collection. Set `token` after logging in (value of `jwtAccessToken` from the login response).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/auth/register",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"pass1234\",\n  \"role\": \"CUSTOMER\",\n  \"profilePhoto\": \"\",\n  \"phone\": \"01700000000\",\n  \"bio\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Login(CUSTOMER)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/auth/login",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"rifat@gmail.com\",\n  \"password\": \"rifat123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Login(provider)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/auth/login",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jony@gmail.com\",\n  \"password\": \"jony123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json?.data?.jwtAccessToken) {",
+                  "  pm.collectionVariables.set('token', json.data.jwtAccessToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login(admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/auth/login",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"asif@gmail.com\",\n  \"password\": \"asif123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get Current User (me)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/auth/me",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/auth/me",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"bio\": \"Love outdoor sports\",\n  \"phone\": \"01700000000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Gear & Categories (Public)",
+      "item": [
+        {
+          "name": "Get All Gear (filters)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/gear",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "gear"
+              ],
+              "query": [
+                {
+                  "key": "categoryId",
+                  "value": "",
+                  "description": "Filter by category id"
+                },
+                {
+                  "key": "brand",
+                  "value": "Quechua"
+                },
+                {
+                  "key": "minPrice",
+                  "value": "100"
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "5000"
+                }
+              ],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Get Gear Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/gear/5235d212-f73a-4ca4-bf13-a75a1e93a9a2",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "gear",
+                "5235d212-f73a-4ca4-bf13-a75a1e93a9a2"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/categories",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Provider",
+      "item": [
+        {
+          "name": "Add Gear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/provider/gear",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "provider",
+                "gear"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "\n{\n  \"name\": \"Quechua 2P Tent\",\n  \"description\": \"Waterproof 2-person camping tent\",\n  \"brand\": \"Quechua\",\n  \"categoryId\": \"ab6e390d-aea0-48e3-8997-b70ec445e03f\",\n  \"condition\": \"GOOD\",\n  \"pricePerDay\": 500,\n  \"securityDeposit\": 2000,\n  \"quantity\": 3,\n  \"status\": \"AVAILABLE\",\n  \"images\": [\n    \"https://example.com/tent-front.jpg\",\n    \"https://example.com/tent-side.jpg\",\n    \"https://example.com/tent-interior.jpg\",\n    \"https://example.com/tent-packed.jpg\"\n  ],\n  \"specifications\": {\n    \"weight\": \"2.4kg\",\n    \"capacity\": 2,\n    \"material\": \"Polyester\",\n    \"waterproof\": true,\n    \"color\": \"Green\",\n    \"dimensions\": \"210 x 130 x 110 cm\",\n    \"seasons\": 3,\n    \"setupTime\": \"5 minutes\"\n  }\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Update Gear",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/provider/gear/:id",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "provider",
+                "gear",
+                ":id"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "GEAR_ITEM_ID"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pricePerDay\": 450,\n  \"description\": \"Updated description\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Gear",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/provider/gear/:id",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "provider",
+                "gear",
+                ":id"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "GEAR_ITEM_ID"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Restock Gear",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/provider/gear/c1cbf2d6-6f39-4dce-8271-502974dc26e1/stock",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "provider",
+                "gear",
+                "c1cbf2d6-6f39-4dce-8271-502974dc26e1",
+                "stock"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 18\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get Provider Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/provider/orders",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "provider",
+                "orders"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Update Order Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Allowed transitions:\nPLACED → CONFIRMED | CANCELLED\nCONFIRMED → PAID | CANCELLED\nPAID → PICKED_UP | CANCELLED\nPICKED_UP → RETURNED\n\nStock is restored automatically on CANCELLED and RETURNED.",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/provider/orders/3d2957a3-8448-4252-b74d-b39c671b12d4",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "provider",
+                "orders",
+                "3d2957a3-8448-4252-b74d-b39c671b12d4"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CONFIRMED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rental Orders",
+      "item": [
+        {
+          "name": "Create Rental Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/rentals",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "rentals"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"startDate\": \"2026-11-01\",\n  \"endDate\": \"2026-11-04\",\n  \"items\": [\n    { \"gearItemId\": \"GEAR_ITEM_ID\", \"quantity\": 1 }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get My Rental Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/rentals",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "rentals"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Get Rental Order Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/rentals/3d2957a3-8448-4252-b74d-b39c671b12d4",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "rentals",
+                "3d2957a3-8448-4252-b74d-b39c671b12d4"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Cancel Rental Order (customer)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/rentals/:id/cancel",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "rentals",
+                ":id",
+                "cancel"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "RENTAL_ORDER_ID"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create Payment (Stripe Checkout)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/payments/create",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "create"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rentalOrderId\": \"RENTAL_ORDER_ID\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Payment Webhook (Stripe callback)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "description": "Called by Stripe with a signed event payload. Use `npm run stripe:listen` for local testing.",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/payments/webhook",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "webhook"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Get Payment History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/payments",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "payments"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Get Payment Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/payments/321ea3a9-f2c8-42cf-b08d-7a3be3368e25",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "321ea3a9-f2c8-42cf-b08d-7a3be3368e25"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/reviews",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "reviews"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"gearItemId\": \"c57e3777-e58f-4b45-954f-da5ff42468f3\",\n  \"rating\": 5,\n  \"comment\": \"I had the experience with this gear very long time and yes this time I ordered 14 pieces and to be honest was so good!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get Reviews For Gear",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/reviews/gear/:gearItemId",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "reviews",
+                "gear",
+                ":gearItemId"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "gearItemId",
+                  "value": "GEAR_ITEM_ID"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get My Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/reviews/my-reviews",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "reviews",
+                "my-reviews"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Update Review",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/reviews/:id",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "reviews",
+                ":id"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REVIEW_ID"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"comment\": \"Updated comment\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Review",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/reviews/:id",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "reviews",
+                ":id"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "REVIEW_ID"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/admin/users",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Update User Status (suspend/activate)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/admin/users/:id",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                ":id"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "USER_ID"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activeStatus\": \"SUSPEND\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get All Gear",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/admin/gear",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "gear"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Get All Rental Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/admin/rentals",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "rentals"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/admin/categories",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "categories"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\",\n  \"description\": \"Tents, sleeping bags and camp gear\",\n  \"image\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get Categories (with gear)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "https://gear-up-ivory-nine.vercel.app/api/admin/categories",
+              "protocol": "https",
+              "host": [
+                "gear-up-ivory-nine",
+                "vercel",
+                "app"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "categories"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://gear-up-ivory-nine.vercel.app",
+      "type": "default"
+    },
+    {
+      "key": "token",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFjOTIyMWY5LTc4NDctNGNmZS1hZGRlLWU3NzI0ZDZiNGMwMSIsIm5hbWUiOiJqb255IiwiZW1haWwiOiJqb255QGdtYWlsLmNvbSIsInJvbGUiOiJQUk9WSURFUiIsImlhdCI6MTc5MjgwODUxMywiZXhwIjoxNzkyODEyMTEzfQ.uK2ksgKXFp2eXU0o_1Kq6viPMftakhKyH6WkyBhWZxk",
+      "type": "default"
+    }
+  ]
+}
